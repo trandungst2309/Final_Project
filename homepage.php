@@ -285,7 +285,7 @@ body h3 {
     <br><br>
     <section class="home" id="home">
         <div class="content">
-            <h3 class="animated-text" style="padding-top: 4rem;">TD Motor — where your journey begins.</h3>
+            <h3 class="animated-text" style="padding-top: 4rem;">TD Motor — where your journey begins</h3>
             <span>Welcome to TD Motor – where you can find the top-of-the-line motorcycles at the most
                 competitive prices. Here, you can easily find your dream motorcycle in our diverse
                 collection, from powerful sports cars to other trendy models. TD Motor is committed
