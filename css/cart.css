@@ -1,0 +1,21 @@
+.table td, .table th {
+   font-size: 18px;
+ }
+ 
+ .table img {
+   width: 400px;
+   /* height: 150px; */
+ }
+ 
+ .table .price {
+   font-size: 20px;
+   color: #FF0000; /* màu đỏ */
+}
+ 
+ .table .total-price {
+   font-size: 22px;
+   font-weight: bold;
+ }
+ check-out{
+   background-color: #FF0000;
+ }

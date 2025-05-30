@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Raleway, sans-serif;
+}
+
+body {
+    background-image: url(../image/ftbackground.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px; /* Add some padding if needed */
+}
+
+.screen {
+    /* background: linear-gradient(90deg, #5D54A4, #caf9ff);         */
+    position: relative;    
+    height: auto; /* Change height to auto */
+    width: 420px;    
+    box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px; /* Add padding to ensure content fits */
+	overflow: hidden;
+
+}
+
+
+.screen__content {
+    z-index: 1;
+    position: relative;    
+    padding: 40px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align items */
+    justify-content: center; /* Center align content */
+}
+
+
+.screen__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+.screen__background__shape {
+    transform: rotate(45deg);
+    position: absolute;
+}
+
+.screen__background__shape1 {
+    height: 500px; /* Adjusted height */
+    width: 500px; /* Adjusted width */
+    background: #FFF;
+    top: -50px;
+    right: 100px;
+    border-radius: 0 72px 0 0;
+}
+
+.screen__background__shape2 {
+    height: 220px;
+    width: 220px;
+    background: #6C63AC;
+    top: -172px;
+    right: 0;
+    border-radius: 32px;
+}
+
+.screen__background__shape3 {
+    height: 540px;
+    width: 190px;
+    background: linear-gradient(270deg, #5D54A4, #6A679E);
+    top: -24px;
+    right: 0;
+    border-radius: 32px;
+}
+
+.screen__background__shape4 {
+    height: 400px;
+    width: 200px;
+    background: #7E7BB9;
+    top: 350px; /* Adjusted position */
+    right: 50px;
+    border-radius: 60px;
+}
+
+.login {
+    width: 100%;
+    padding: 30px;
+    padding-top: 100px; /* Adjusted padding-top */
+    color: whitesmoke;
+}
+
+.login__field {
+    padding: 20px 0;
+    position: relative;
+}
+
+.login__icon {
+    position: absolute;
+    top: 30px;
+    color: #2a00fe;
+}
+
+.login__input {
+    border: none;
+    border-bottom: 2px solid #D1D1D4;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px); 
+    padding: 10px;
+    padding-left: 24px;
+    font-weight: 700;
+    width: 100%;
+    color: white; /* Thêm dòng này nếu bạn dùng nền tối */
+    transition: .2s;
+}
+
+
+.login__input:active,
+.login__input:focus,
+.login__input:hover {
+    outline: none;
+    border-bottom-color: red;
+}
+
+.login__submit {
+    background: #fff;
+    font-size: 14px;
+    margin-top: 30px;
+    padding: 16px 20px;
+    border-radius: 26px;
+    border: 1px solid #D4D3E8;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    color: #4C489D;
+    box-shadow: 0px 2px 2px #5C5696;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.login__submit:active,
+.login__submit:focus,
+.login__submit:hover {
+    border-color: #6A679E;
+    background-color:aquamarine;
+    outline: none;
+    color: black;
+}
+
+/* .button__icon {
+    font-size: 24px;
+    margin-left: auto;
+    color: #2a00fe;
+} */
+
+/* Error and Success Messages */
+.error {
+    color: red;
+    font-size: 20px; /* Adjusted font size */
+    margin: 10px 0;
+    text-align: center;
+    padding: 0;
+}
+
+/* Heading Styles */
+.login h1 {
+    text-align: center;
+    font-size: 30px; /* Adjusted font size */
+    font-weight: bold;
+    margin-bottom: 30px; /* Adjusted margin */
+}
+.button__back {
+    background: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 26px;
+    box-shadow: 0px 2px 2px #4CAF50;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    padding: 16px 20px;
+    display: block;
+    width: 100%;
+    margin-top: 20px; /* Space above the button */
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.button__back:hover {
+    background: white; /* Darker green on hover */
+    box-shadow: 0px 2px 4px #45a049;
+    color: black;
+}
+.sign_up{
+    color: whitesmoke;
+}
+
+.forgot_pass{
+    color: whitesmoke;
+}
+
+.sign_up:hover{
+    color: red;
+    text-decoration: underline; 
+}
+
+.forgot_pass:hover{
+    color: red;
+    text-decoration: underline;
+
+}

@@ -1,0 +1,78 @@
+/* Style the "Add to Order" button */
+.btn-primary.btn-lg {
+  background-color: #007bff;
+  /* Bootstrap's primary blue */
+  border-color: #007bff;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.25rem;
+  /* Increase the font size */
+  border-radius: 30px;
+  /* Make the button more rounded */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-left: 230px;
+}
+
+/* CSS trong detail.css hoặc trong <style> */
+/* 
+
+
+*/ .btn-add-to-order {
+  background-color: #599df1 !important;
+  /* Màu nền */
+  color: white !important;
+  /* Màu chữ */
+  border: none !important;
+  /* Bỏ viền */
+  padding: 10px 20px !important;
+  /* Khoảng cách bên trong nút */
+  font-size: 16px !important;
+  /* Kích thước chữ */
+  border-radius: 5px !important;
+  /* Bo tròn góc nút */
+  cursor: pointer !important;
+  margin-left: 230px;
+
+}
+h1{
+  color: #fa5d1e;
+}
+
+.btn-add-to-order:hover {
+  background-color: #134ac0 !important;
+  /* Màu nền khi hover */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2) !important;
+  /* Đổ bóng khi hover */
+}
+
+
+
+/* Style for the price text */
+.text-success.h4 {
+  font-size: 2rem;
+  /* Increase the font size for the price */
+  color: #f92e64;
+  /* Ensure it's using Bootstrap's success green */
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.mb-3 {
+  color: #fa5d1e;
+}
+
+/* Style for the product description */
+p.mt-4 {
+  font-size: 15px;
+  /* Increase the font size for the description */
+  color: #333;
+  /* Darker text color */
+  line-height: 1.6;
+  /* Improve readability */
+}
+
+/* Optional: Additional styling for the carousel images */
+.carousel-item img {
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(241, 1, 1, 0.1);
+}

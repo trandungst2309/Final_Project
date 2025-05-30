@@ -1,0 +1,323 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: .2s linear;
+
+}
+
+html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+}
+
+section {
+    padding: 2rem 9%;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 1rem;
+    border-radius: 5rem;
+    background: #fff;
+    color: #f40000;
+    padding: .9rem 3.5rem;
+    cursor: pointer;
+    font-size: 2rem;
+    text-decoration: none;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 1rem;
+    border-radius: 5rem;
+    background: #fff;
+    color: #f40000;
+    padding: .9rem 3.5rem;
+    cursor: pointer;
+    font-size: 2rem;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: #333;
+    color: #f40000;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: aliceblue;
+    padding: 2rem 9%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 .3rem 1rem rgb(0, 0, 0.1);
+
+}
+
+header .logo {
+    font-size: 3rem;
+    color: #333;
+    font-weight: bolder;
+    text-decoration: none;
+}
+
+header .navbar a {
+    font-size: 2rem;
+    padding: 0 1.5rem;
+    color: #666;
+}
+
+header .navbar a:hover {
+    color: chocolate;
+}
+
+header .icons a {
+    font-size: 2.5rem;
+    color: #333;
+    margin-left: 1.5rem;
+    text-decoration: none;
+    font-family: 'Open Sans', sans-serif;
+}
+
+
+header .icons a:hover {
+    color: chocolate;
+}
+
+header #toggler {
+    display: none;
+}
+
+header .fa-bars {
+    font-size: 3rem;
+    color: #333;
+    border-radius: .5rem;
+    padding: .5rem 1.5rem;
+    cursor: pointer;
+    border: .1rem solid rgb(0, 0, 0, .3);
+    display: none;
+}
+
+
+#home {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    background: url(../image/hondacbr.jpg) no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.home .content {
+    max-width: 50rem;
+}
+
+.home .content h3 {
+    margin-bottom: 20%;
+    font-size: 4rem;
+    color: red;
+}
+
+.home .content span {
+    padding: 1rem 2rem;
+    font-size: 20px;
+    line-height: 1.6;
+    background: rgba(234, 242, 242, 0.433);
+    /* Màu nền trắng với độ trong suốt */
+    border-radius: 20px;
+    position: relative;
+    color:#000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.home .content p {
+    font-size: 2.5rem;
+    color: #f62222;
+    padding: 1rem 0;
+    line-height: 1.5;
+}
+/* .animated-text {
+    font-size: 2.5rem;
+    padding: 0;
+    line-height: 1.5;
+    animation: fadeIn 2s ease-in-out;
+} */
+
+.about,
+.product,
+.contact {
+    text-align: center;
+}
+
+.product .card {
+    margin: 20px 0;
+    max-height: none;
+}
+
+.product .card img {
+    max-height: 250px;
+    object-fit: fill;
+}
+.btn-primary-custom {
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+}
+
+.btn-secondary-custom {
+    background-color: #666666;
+    border-color: #444444;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+}
+
+.btn-primary-custom:hover {
+    background-color: #23527c;
+    border-color: #1d4e7a;
+}
+
+.btn-secondary-custom:hover {
+    background-color: #444444;
+    border-color: #333333;
+}
+
+.search-container {
+    background: #fff;
+    height: 30px;
+    border-radius: 30px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.8s;
+    box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, .3),
+        -4px -4px 6px 0 rgba(116, 125, 136, .2),
+        inset -4px -4px 6px 0 rgba(255, 255, 255, .2),
+        inset 4px 4px 6px 0 rgba(0, 0, 0, .2);
+}
+
+.search-container:hover>.search-input {
+    width: 150px;
+}
+
+.search-container .search-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 0px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: 0.8s;
+
+}
+.banner {
+    background-color: #f8f9fa; /* Light background for the banner */
+}
+    
+.banner .card {
+    border: none; /* Remove border for a cleaner look */
+}
+
+.banner .card-img-top {
+    border-radius: 50px; /* Rounded corners for the image */
+}
+
+.banner .btn-custom {
+    margin-top: 10px;
+}
+/* style.css */
+
+.card-title {
+    font-size: 1.25rem; /* Font size for the product name */
+    font-weight: bold; /* Make the text bold */
+    color: #333; /* Darker color for better visibility */
+}
+
+.product-title{
+    font-size: 1.5rem; /* Font size for the product name */
+    font-weight: bold; /* Make the text bold */
+    color:#337ab7; /* Darker color for better visibility */
+}
+
+.product-price {
+    font-size: 1.5rem; /* Slightly larger font size for the price */
+    font-weight: bold; /* Make the text bold */
+    color:#f62222; /* Highlight color for the price */
+
+}
+
+.card-body {
+    padding: 1.5rem; /* Add padding to the card body for better spacing */
+}
+
+.card-img-top {
+    border-bottom: 2px solid chocolate; /* Border for image */
+    padding-bottom: 1rem; /* Space between image and text */
+}
+
+.card {
+    border-radius: 10px; /* Rounded corners for the card */
+    overflow: hidden; /* Hide any overflow from the card */
+}
+.btn-add-to-cart, .btn-view-details {
+    border-radius: 25px;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-add-to-cart {
+    background-color:forestgreen; /* Green pastel */
+    color: #fff;
+}
+
+.btn-add-to-cart:hover {
+    background-color: chartreuse; /* Slightly darker green */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-view-details {
+    background-color:deepskyblue; /* Blue pastel */
+    color: #000;
+}
+
+.btn-view-details:hover {
+    background-color:aqua; /* Slightly darker blue */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-custom {
+    font-size: 16px;
+    justify-content: space-between;
+
+}
