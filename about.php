@@ -38,11 +38,15 @@
                         alike.
                     </p>
 
+                    <br>
+
                     <div class="text-center my-4">
                         <img src="uploads/motoshop.png" alt="About Us" class="img-fluid rounded-4 shadow"
                             style="max-width: 750px;">
                     </div>
 
+                    <br>
+                    
                     <p>
                         At TD Motor, we believe that a motorbike is more than just a vehicle—it’s a lifestyle, a symbol
                         of freedom, and a source of adrenaline. That’s why we offer a carefully curated selection of

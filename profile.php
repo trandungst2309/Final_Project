@@ -52,84 +52,84 @@ if (isset($_GET['product_id'])) {
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .btn_edit {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 1px 2px;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: background-color 0.3s, transform 0.3s;
-            cursor: pointer;
-            display: inline-block;
-            text-align: center;
-            margin-left: 1px;
-        }
+    .btn_edit {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 1px 2px;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.3s, transform 0.3s;
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        margin-left: 1px;
+    }
 
-        .btn_edit:hover {
-            background-color: whitesmoke;
-            transform: translateY(-2px);
-            color: #dc3545;
-        }
+    .btn_edit:hover {
+        background-color: whitesmoke;
+        transform: translateY(-2px);
+        color: #dc3545;
+    }
 
-        .btn_change_pass {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 1px 2px;
-            font-size: 16px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: background-color 0.3s, transform 0.3s;
-            cursor: pointer;
-            display: inline-block;
-            text-align: center;
-            margin-right: 1px;
-        }
+    .btn_change_pass {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 1px 2px;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.3s, transform 0.3s;
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        margin-right: 1px;
+    }
 
-        .btn_change_pass:hover {
-            background-color: whitesmoke;
-            transform: translateY(-2px);
-            color: #dc3545;
-        }
+    .btn_change_pass:hover {
+        background-color: whitesmoke;
+        transform: translateY(-2px);
+        color: #dc3545;
+    }
 
-        .profile-header {
-            background: #f8f9fa;
-            padding: 2rem 0;
-            text-align: center;
-            border-bottom: 1px solid #dee2e6;
-        }
+    .profile-header {
+        background: #f8f9fa;
+        padding: 2rem 0;
+        text-align: center;
+        border-bottom: 1px solid #dee2e6;
+    }
 
-        .profile-header img {
-            border-radius: 50%;
-            border: 2px solid #dc3545;
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-        }
+    .profile-header img {
+        border-radius: 50%;
+        border: 2px solid #dc3545;
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+    }
 
-        .profile-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+    .profile-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
 
-        .profile-card .card-header {
-            background-color: #dc3545;
-            color: white;
-        }
+    .profile-card .card-header {
+        background-color: #dc3545;
+        color: white;
+    }
 
-        .profile-card .card-body {
-            padding: 2rem;
-        }
+    .profile-card .card-body {
+        padding: 2rem;
+    }
 
-        .profile-card .card-body p {
-            margin-bottom: 1rem;
-            font-size: medium;
-        }
+    .profile-card .card-body p {
+        margin-bottom: 1rem;
+        font-size: medium;
+    }
     </style>
 </head>
 
@@ -137,9 +137,17 @@ if (isset($_GET['product_id'])) {
     <?php include_once 'header.php'; ?>
 
     <div class="container my-5">
+        <h1 class="text-center mb-4" style="color: red; font-weight: bold;">Customer Profile</h1>
         <div class="profile-header">
-            <img src="<?= !empty($customer['profile_image']) ? './uploads/' . htmlspecialchars($customer['profile_image']) : './uploads/avatars/default-avatar.png' ?>"
-                alt="Profile Image" />
+            <?php if (!empty($customer['profile_image'])): ?>
+            <!-- Nếu có ảnh đại diện -->
+            <img src="uploads/<?= htmlspecialchars($customer['profile_image']) ?>" alt="Profile Image"
+                class="rounded-circle" width="30" height="30">
+            <?php else: ?>
+            <!-- Nếu không có ảnh, hiển thị icon người dùng -->
+            <i class="bi bi-person-circle fs-4 text-white"></i>
+            <?php endif; ?>
+
             <h2 class="mt-3"><?= htmlspecialchars($customer['customer_name']) ?></h2>
         </div>
 
@@ -159,7 +167,8 @@ if (isset($_GET['product_id'])) {
                             onclick="window.location.href='update_password.php'">Change Password</button>
 
                         <!-- Edit Profile Button -->
-                        <button type="button" class="btn_edit" onclick="window.location.href='update_profile.php'">Edit Profile</button>
+                        <button type="button" class="btn_edit" onclick="window.location.href='update_profile.php'">Edit
+                            Profile</button>
 
                     </div>
                 </div>
@@ -168,24 +177,24 @@ if (isset($_GET['product_id'])) {
 
         <!-- Display product information if available -->
         <?php if ($product_info): ?>
-            <div class="row justify-content-center mt-4">
-                <div class="col-md-8">
-                    <div class="card profile-card">
-                        <div class="card-header text-center">
-                            <h4>Product Information</h4>
-                        </div>
-                        <div class="card-body">
-                            <img src="<?= !empty($product_info['product_img']) ? './uploads/' . htmlspecialchars($product_info['product_img']) : './uploads/products/default-product.png' ?>"
-                                class="card-img-top" alt="Product Image">
-                            <h5 class="card-title"><?= htmlspecialchars($product_info['product_name']) ?></h5>
-                            <p class="card-text">Price: $<?= htmlspecialchars($product_info['product_price']) ?></p>
-                        </div>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <div class="card profile-card">
+                    <div class="card-header text-center">
+                        <h4>Product Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <img src="<?= !empty($product_info['product_img']) ? './uploads/' . htmlspecialchars($product_info['product_img']) : './uploads/products/default-product.png' ?>"
+                            class="card-img-top" alt="Product Image">
+                        <h5 class="card-title"><?= htmlspecialchars($product_info['product_name']) ?></h5>
+                        <p class="card-text">Price: $<?= htmlspecialchars($product_info['product_price']) ?></p>
                     </div>
                 </div>
             </div>
+        </div>
         <?php endif; ?>
 
-       
+
     </div>
 
     <!-- Edit Profile Modal -->
@@ -235,15 +244,15 @@ if (isset($_GET['product_id'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
     <?php if (!empty($alertMessage)): ?>
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: '<?= addslashes($alertMessage) ?>',
-                timer: 3000,
-                showConfirmButton: false
-            });
-        </script>
+    <script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: '<?= addslashes($alertMessage) ?>',
+        timer: 3000,
+        showConfirmButton: false
+    });
+    </script>
     <?php endif; ?>
 </body>
 

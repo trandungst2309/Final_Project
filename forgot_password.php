@@ -105,14 +105,6 @@ if (isset($_POST['btnSavePassword']) && isset($_SESSION['step']) && $_SESSION['s
                     <?php endif; ?>
                 </form>
             </div>
-
-            <!-- Background shapes -->
-            <div class="screen__background">
-                <!-- <span class="screen__background__shape screen__background__shape1"></span>
-            <span class="screen__background__shape screen__background__shape2"></span>
-            <span class="screen__background__shape screen__background__shape3"></span>
-            <span class="screen__background__shape screen__background__shape4"></span> -->
-            </div>
         </div>
     </div>
 </body>

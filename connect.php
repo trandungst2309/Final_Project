@@ -40,10 +40,10 @@ class Connect{
         } 
 }
     //test connect
-$c = new Connect();
-$c->connectToMySQL();
-$c = new Connect();
-$c->connectToPDO();
+// $c = new Connect();
+// $c->connectToMySQL();
+// $c = new Connect();
+// $c->connectToPDO();
 
 ?>
 

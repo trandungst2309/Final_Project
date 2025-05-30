@@ -9,6 +9,26 @@
     <link rel="stylesheet" href="css/login.css">
 </head>
 
+<style>
+    .btn-back{
+        background-color:forestgreen;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    /* .btn-back:hover {
+        background-color: darkgreen !important;
+        color: #333 !important;
+        text-decoration: none !important;
+        transition: background-color 0.3s ease;
+    } */
+</style>
+
 <body>
 
     <?php
@@ -109,7 +129,7 @@ if (isset($_POST['btnRegister'])) {
                 </button>
 
                 <!-- New Back to Login link -->
-                <a href="loginnew.php" class="button button__back">
+                <a href="loginnew.php" class="button__back">
                     <span class="button__text">Back to Login Page</span>
                 </a>
 

@@ -99,10 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <?php include_once 'header.php'; ?>
 
-    <div class="container" style="padding-top: 150px;">
+    <div class="container my-5" style="padding-top: 150px;">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
-                <h2 class="mb-4">Update Profile</h2>
+                <h2 class="mb-4" style="color: red; font-weight:bold">Update Profile</h2>
 
                 <?php if (!empty($errors)): ?>
                     <div class="alert alert-danger">
@@ -120,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             src="<?= !empty($customer['profile_image']) ? './uploads/' . htmlspecialchars($customer['profile_image']) : './uploads/avatars/default-avatar.png' ?>"
                             alt="Profile Image"
                             width="120"
+                            height="120"
                             style="border-radius: 50%; border: 2px solid #dc3545;">
                     </div>
 

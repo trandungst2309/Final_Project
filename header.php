@@ -177,7 +177,7 @@ header {
         <nav class="navbar">
             <a href="homepage.php" class="nav-link-active">Home</a>
             <a href="homepage.php#product" class="nav-link">Products</a>
-            <a href="homepage.php#footer" class="nav-link">Contact</a>
+            <a href="contact.php" class="nav-link">Contact</a>
 
             <form method="POST" action="search.php">
                 <div class="search-container">
@@ -193,6 +193,9 @@ header {
             if (isset($_SESSION['customer_id']) && isset($_SESSION['customer_name'])) {
                 echo "<span class='me-2'>Hi, " . htmlspecialchars($_SESSION['customer_name']) . "</span>";
 
+                if (!class_exists('Connect')) {
+                    include_once 'connect.php';
+                }
                 $conn = new Connect();
                 $db_link = $conn->connectToPDO();
                 $sql = "SELECT profile_image FROM customer WHERE customer_id = ?";
@@ -205,7 +208,7 @@ header {
                     echo '<a href="profile.php"><img src="uploads/' . htmlspecialchars($user['profile_image']) . '" class="rounded-circle me-2" width="30" height="30" alt="Profile"></a>';
                 } else {
                     // Icon nếu không có ảnh
-                    echo '<a href="profile.php" class="bi bi-person-circle me-2 fs-5"></a>';
+                    echo '<a href="profile.php" class="bi bi-person-circle me-2 fs-3"></a>';
                 }
 
                 echo '<a href="cart.php" class="bi bi-cart-check me-3 fs-3"></a>';

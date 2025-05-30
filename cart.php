@@ -45,7 +45,7 @@ if (isset($_POST['add_to_cart'])) {
 
             if ($cart_count > 0) {
                 // If there is already an item in the cart, notify the user
-                $_SESSION['message'] = "You can only add 1 Product to your cart.";
+                $_SESSION['message'] = "You can only add one duplicate product to your cart!";
             } else {
                 // Add product to cart
                 $query = "INSERT INTO cart (customer_id, product_id, product_name, product_price, product_img, date, count) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -58,14 +58,14 @@ if (isset($_POST['add_to_cart'])) {
                 $stmt = $db_link->prepare($update_sql);
                 $stmt->execute([$new_quantity, $product_id]);
 
-                echo '<script>alert("Product added to cart successfully."); window.location.href="cart.php";</script>';
+                echo '<script>alert("An item added to cart successfully!"); window.location.href="cart.php";</script>';
                 exit();
             }
         } else {
-            $_SESSION['message'] = "This product is out of stock.";
+            $_SESSION['message'] = "Sorry! This product is out of stock!";
         }
     } else {
-        echo "Please provide all product information.";
+        echo "Please provide all product information!";
     }
 }
 
@@ -78,7 +78,7 @@ if (isset($_GET['remove'])) {
     $stmt->execute([$cart_id, $customer_id]);
 
     // Hiển thị thông báo trên hộp thoại xóa sản phẩm thành công
-    echo '<script>alert("Deleted success!"); window.location.href="cart.php";</script>';
+    echo '<script>alert("An item has been remove!"); window.location.href="cart.php";</script>';
     exit();
 }
 
@@ -96,7 +96,7 @@ $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>Shopping Cart | TD Motor</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
     <link rel="icon" href="../image/TDicon.png" type="image/x-icon">
     <style>
@@ -122,9 +122,10 @@ $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         .alert-info {
-            background-color:#bce8f1;
-            color: #31708f;
-            border-color: #bce8f1;
+            background-color:lavender;
+            color: red;
+            font-weight: bold;
+            border-color: lavender;
             text-align: center;
         }
 

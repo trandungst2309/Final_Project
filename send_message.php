@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Send Message</title>
-    <!-- Thêm SweetAlert vào <head> -->
+    <!-- Thêm SweetAlert -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 </head>
@@ -46,7 +46,7 @@ if (!empty($name) && !empty($email) && !empty($message)) {
             echo "<script>
                     Swal.fire({
                         title: 'Success!',
-                        text: 'Message sent successfully!',
+                        text: 'A message has been sent!',
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
@@ -71,7 +71,7 @@ if (!empty($name) && !empty($email) && !empty($message)) {
         echo "<script>
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Invalid email format.',
+                    text: 'Invalid email!',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 }).then(() => {
@@ -83,7 +83,7 @@ if (!empty($name) && !empty($email) && !empty($message)) {
     echo "<script>
             Swal.fire({
                 title: 'Error!',
-                text: 'Please Register to send messages.!',
+                text: 'Please Login to send messages!',
                 icon: 'error',
                 confirmButtonText: 'OK'
             }).then(() => {
