@@ -423,7 +423,7 @@ body h3 {
                                     data-logged-in="<?= $is_logged_in ? 'true' : 'false' ?>">Add to Order</button>
 
                                 <a href="product_detail.php?product_id=<?= ($product['product_id']) ?>"
-                                    class="btn btn-view-details">View Details</a>
+                                    class="btn btn-view-details">View Detail</a>
                             </form>
                         </div>
 

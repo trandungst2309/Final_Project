@@ -99,8 +99,8 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
     </div>
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
-            <nav class="navbar header-navbar pcoded-header">
+        <div class="pcoded-container navbar-wrapper" >
+            <nav class="navbar header-navbar pcoded-header" >
                 <div class="navbar-wrapper">
                     <div class="navbar-logo">
                         <a class="mobile-menu waves-effect waves-light" id="mobile-collapse" href="#!">
@@ -175,8 +175,8 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
                     <nav class="pcoded-navbar">
                         <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="">
-                                <div class="main-menu-header">
+                            <!-- <div class="">
+                                <div class="main-menu-header" style="padding: 2rem;">
                                     <img class="img-80 img-radius" src="assets/images/avatar-4.jpg" alt="User-Profile-Image"> <div class="user-details">
                                         <?php
                                         if (isset($_SESSION['customer_name'])) {
@@ -187,8 +187,8 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
                                         ?>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="p-15 p-b-0">
+                            </div> -->
+                            <div class="p-15 p-b-0" style="padding: 50px;">
                                 <form class="form-material">
                                     <div class="form-group form-primary">
                                         </div>
@@ -230,7 +230,13 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
-
+                                        <li class="">
+                                            <a href="homepage.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">TD Website</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>

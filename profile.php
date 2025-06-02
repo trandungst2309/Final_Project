@@ -137,7 +137,7 @@ if (isset($_GET['product_id'])) {
     <?php include_once 'header.php'; ?>
 
     <div class="container my-5">
-        <h1 class="text-center mb-4" style="color: red; font-weight: bold;">Customer Profile</h1>
+        <h1 class="text-center mb-4" style="color: red; font-weight: bold;">Account Profile</h1>
         <div class="profile-header">
             <?php if (!empty($customer['profile_image'])): ?>
             <!-- Nếu có ảnh đại diện -->
@@ -155,7 +155,7 @@ if (isset($_GET['product_id'])) {
             <div class="col-md-8">
                 <div class="card profile-card">
                     <div class="card-header text-center">
-                        <h4>Profile Information</h4>
+                        <h4>Profile Detail</h4>
                     </div>
                     <div class="card-body">
                         <p><strong>Email:</strong> <?= htmlspecialchars($customer['email']) ?></p>

@@ -178,6 +178,9 @@ header {
             <a href="homepage.php" class="nav-link-active">Home</a>
             <a href="homepage.php#product" class="nav-link">Products</a>
             <a href="contact.php" class="nav-link">Contact</a>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <a href="admin.php" class="nav-link-active">Admin</a>
+            <?php endif; ?>
 
             <form method="POST" action="search.php">
                 <div class="search-container">
