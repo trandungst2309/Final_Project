@@ -110,6 +110,9 @@ $conn->close();
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
                     <div class="navbar-logo">
+                        <a href="admin.php" class="logo-container">
+                            <img src="image/TDicon1.png" alt="Logo" class="logo-img" style="height: 100px;">
+                        </a>
                         <a class="mobile-menu waves-effect waves-light" id="mobile-collapse" href="#!">
                             <i class="ti-menu"></i>
                         </a>
@@ -120,7 +123,8 @@ $conn->close();
                     <div class="navbar-container container-fluid">
                         <ul class="nav-left">
                             <li>
-                                <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a></div>
+                                <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a>
+                                </div>
                             </li>
                             <li class="header-search">
                                 <div class="main-search morphsearch-search">
@@ -136,6 +140,38 @@ $conn->close();
                                 </a>
                             </li>
                         </ul>
+                        <ul class="nav-right">
+                            <li class="user-profile header-nav-profile">
+                                <!-- <a href="#!" class="waves-effect waves-light">
+                                    <?php
+                                    // Bắt đầu session nếu chưa được khởi tạo
+                                    if (session_status() == PHP_SESSION_NONE) {
+                                        session_start();
+                                    }
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<img class="img-radius" src="assets/images/avatar-4.jpg" alt="User-Profile-Image">'; // Ảnh đại diện mặc định
+                                        echo '<span>' . htmlspecialchars($_SESSION['customer_name']) . '</span>';
+                                    } else {
+                                        echo '<img class="img-radius" src="assets/images/avatar-4.jpg" alt="User-Profile-Image">';
+                                        echo '<span>Admin</span>';
+                                    }
+                                    ?>
+                                    <i class="ti-angle-down"></i>
+                                </a> -->
+                                <ul class="show-notification profile-notification">
+                                    <li class="waves-effect waves-light">
+                                        <a href="profile.php">
+                                            <i class="ti-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li class="waves-effect waves-light">
+                                        <a href="logout.php">
+                                            <i class="ti-layout-sidebar-left"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
@@ -146,15 +182,15 @@ $conn->close();
                     <nav class="pcoded-navbar">
                         <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="main-menu-header">
+                            <!-- <div class="main-menu-header">
                                 <div class="user-details">
                                 </div>
-                            </div>
+                            </div> -->
                             <br>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="active">
                                     <a href="admin.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
+                                        <span class="pcoded-micon"><i class="ti-home"></i></span>
                                         <span class="pcoded-mtext" data-i18n="nav.dash.main">Dashboard</span>
                                         <span class="pcoded-mcaret"></span>
                                     </a>
@@ -162,54 +198,69 @@ $conn->close();
                                 <li class="pcoded-hasmenu">
                                     <a href="javascript:void(0)" class="waves-effect waves-dark">
                                         <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.basic-components.main">Components</span>
+                                        <span class="pcoded-mtext"
+                                            data-i18n="nav.basic-components.main">Components</span>
                                         <span class="pcoded-mcaret"></span>
                                     </a>
                                     <ul class="pcoded-submenu">
                                         <li class="">
                                             <a href="manage_products.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Product Management</span>
+                                                <span class="pcoded-mtext"
+                                                    data-i18n="nav.basic-components.alert">Product Management</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
                                             <a href="manage_account.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.breadcrumbs">Account Management</span>
+                                                <span class="pcoded-mtext"
+                                                    data-i18n="nav.basic-components.breadcrumbs">Account
+                                                    Management</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class=" ">
                                             <a href="manage_order.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Order Management</span>
+                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Order
+                                                    Management</span>
+                                                <span class="pcoded-mcaret"></span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="homepage.php" class="waves-effect waves-dark">
+                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">TD
+                                                    Website</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                     </ul>
                                 </li>
                             </ul>
-                            <div class="pcoded-navigation-label" data-i18n="nav.category.forms">Chart</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li>
                                     <a href="statistic.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Statistics Management</span>
+                                        <span class="pcoded-micon"><i class="ti-layers"></i></span>
+                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Statistics
+                                            Management</span>
                                         <span class="pcoded-mcaret"></span>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="manage_contact.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-headphone-alt"></i><b>FC</b></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Contact management</span>
+                                        <span class="pcoded-micon"><i class="ti-headphone-alt"></i></span>
+                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Contact
+                                            management</span>
                                         <span class="pcoded-mcaret"></span>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="manage_feedback.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-comment-alt"></i><b>FC</b></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Feedback management</span>
+                                        <span class="pcoded-micon"><i class="ti-comment-alt"></i></span>
+                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Feedback
+                                            management</span>
                                         <span class="pcoded-mcaret"></span>
                                     </a>
                                 </li>
@@ -223,14 +274,16 @@ $conn->close();
                                         <li class=" ">
                                             <a href="loginnew.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Login</span>
+                                                <span class="pcoded-mtext"
+                                                    data-i18n="nav.basic-components.alert">Login</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
                                         <li class="">
                                             <a href="register.php" class="waves-effect waves-dark">
                                                 <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Register</span>
+                                                <span class="pcoded-mtext"
+                                                    data-i18n="nav.basic-components.alert">Register</span>
                                                 <span class="pcoded-mcaret"></span>
                                             </a>
                                         </li>
@@ -249,13 +302,13 @@ $conn->close();
                                             <p class="m-b-0">Welcome to the admin page</p>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <!-- <div class="col-md-4">
                                         <ul class="breadcrumb-title">
                                             <li class="breadcrumb-item">
                                                 <a href="#"> <i class="fa fa-home"></i> </a>
                                             </li>
                                         </ul>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -278,7 +331,8 @@ $conn->close();
                                                                     <h5 class="card-title">Total Quantity Sold</h5>
                                                                 </div>
                                                                 <div class="card-body">
-                                                                    <p class="card-text"><?php echo number_format($totalQuantity); ?></p>
+                                                                    <p class="card-text">
+                                                                        <?php echo number_format($totalQuantity); ?></p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -288,7 +342,8 @@ $conn->close();
                                                                     <h5 class="card-title">Total Revenue</h5>
                                                                 </div>
                                                                 <div class="card-body">
-                                                                    <p class="card-text">$<?php echo number_format($totalRevenue); ?></p>
+                                                                    <p class="card-text">
+                                                                        $<?php echo number_format($totalRevenue); ?></p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -298,74 +353,88 @@ $conn->close();
                                                                     <h5 class="card-title">Total Orders</h5>
                                                                 </div>
                                                                 <div class="card-body">
-                                                                    <p class="card-text"><?php echo number_format($totalOrders); ?></p>
+                                                                    <p class="card-text">
+                                                                        <?php echo number_format($totalOrders); ?></p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <!-- Filter by Month -->
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <h5>Filter Orders by Month</h5>
-                                                    </div>
-                                                    <div class="card-block">
-                                                        <form method="POST" action="">
-                                                            <div class="form-group">
-                                                                <label for="month">Select Month:</label>
-                                                                <select class="form-control" id="month" name="month">
-                                                                    <?php for ($i = 1; $i <= 12; $i++): ?>
-                                                                        <option value="<?php echo $i; ?>"><?php echo date('F', mktime(0, 0, 0, $i, 10)); ?></option>
-                                                                    <?php endfor; ?>
-                                                                </select>
+                                                        <div class="col-md-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h5>Filter Orders by Month</h5>
+                                                                </div>
+                                                                <div class="card-block">
+                                                                    <form method="POST" action="">
+                                                                        <div class="form-group">
+                                                                            <label for="month">Select Month:</label>
+                                                                            <select class="form-control" id="month"
+                                                                                name="month">
+                                                                                <?php for ($i = 1; $i <= 12; $i++): ?>
+                                                                                <option value="<?php echo $i; ?>">
+                                                                                    <?php echo date('F', mktime(0, 0, 0, $i, 10)); ?>
+                                                                                </option>
+                                                                                <?php endfor; ?>
+                                                                            </select>
+                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary">View Orders</button>
+                                                                    </form>
+                                                                </div>
                                                             </div>
-                                                            <button type="submit" class="btn btn-primary">View Orders</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                        </div>
 
-                                            <!-- Display Orders -->
-                                            <div class="col-md-12">
-                                                <?php if (!empty($monthOrders)): ?>
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <h5>Orders for <?php echo date('F', mktime(0, 0, 0, $selected_month, 10)); ?></h5>
-                                                        </div>
-                                                        <div class="card-block">
-                                                            <div class="table-responsive">
-                                                                <table class="table table-bordered">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>Order ID</th>
-                                                                            <th>Date</th>
-                                                                            <th>Product Name</th>
-<th>Price</th>
-                                                                            <th>Quantity</th>
-                                                                            <th>Status</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <?php foreach ($monthOrders as $order): ?>
-                                                                            <tr>
-                                                                                <td><?php echo $order['order_id']; ?></td>
-                                                                                <td><?php echo $order['order_date']; ?></td>
-                                                                                <td><?php echo $order['product_name']; ?></td>
-                                                                                <td>$<?php echo number_format($order['product_price']); ?></td>
-                                                                                <td><?php echo $order['quantity']; ?></td>
-                                                                                <td><?php echo $order['order_status']; ?></td>
-                                                                            </tr>
-                                                                        <?php endforeach; ?>
-                                                                    </tbody>
-                                                                </table>
+                                                        <!-- Display Orders -->
+                                                        <div class="col-md-12">
+                                                            <?php if (!empty($monthOrders)): ?>
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h5>Orders for
+                                                                        <?php echo date('F', mktime(0, 0, 0, $selected_month, 10)); ?>
+                                                                    </h5>
+                                                                </div>
+                                                                <div class="card-block">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-bordered">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Order ID</th>
+                                                                                    <th>Date</th>
+                                                                                    <th>Product Name</th>
+                                                                                    <th>Price</th>
+                                                                                    <th>Quantity</th>
+                                                                                    <th>Status</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <?php foreach ($monthOrders as $order): ?>
+                                                                                <tr>
+                                                                                    <td><?php echo $order['order_id']; ?>
+                                                                                    </td>
+                                                                                    <td><?php echo $order['order_date']; ?>
+                                                                                    </td>
+                                                                                    <td><?php echo $order['product_name']; ?>
+                                                                                    </td>
+                                                                                    <td>$<?php echo number_format($order['product_price']); ?>
+                                                                                    </td>
+                                                                                    <td><?php echo $order['quantity']; ?>
+                                                                                    </td>
+                                                                                    <td><?php echo $order['order_status']; ?>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <?php endforeach; ?>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
                                                             </div>
+                                                            <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
+                                                            <div class="alert alert-warning" role="alert">
+                                                                No orders found for this month.
+                                                            </div>
+                                                            <?php endif; ?>
+
                                                         </div>
-                                                    </div>
-                                                <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
-                                                    <div class="alert alert-warning" role="alert">
-                                                        No orders found for this month.
-                                                    </div>
-                                                <?php endif; ?>
-                                                        
                                                     </div>
                                                 </div>
                                             </div>
@@ -376,44 +445,43 @@ $conn->close();
                         </div>
                     </div>
                 </div>
+
+                <!-- Footer -->
             </div>
-
-            <!-- Footer -->
         </div>
-    </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="assets/js/jquery/jquery.min.js"></script>
-    <script src="assets/js/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="assets/js/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="assets/js/jquery-ui/jquery-ui.min.js "></script>
-    <script type="text/javascript" src="assets/js/popper.js/popper.min.js"></script>
-    <script type="text/javascript" src="assets/js/bootstrap/js/bootstrap.min.js "></script>
-    <script type="text/javascript" src="assets/pages/widget/excanvas.js "></script>
-    <!-- waves js -->
-    <script src="assets/pages/waves/js/waves.min.js"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="assets/js/modernizr/modernizr.js "></script>
-    <!-- slimscroll js -->
-    <script type="text/javascript" src="assets/js/SmoothScroll.js"></script>
-    <script src="assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
-    <!-- Chart js -->
-    <script type="text/javascript" src="assets/js/chart.js/Chart.js"></script>
-    <!-- amchart js -->
-    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script src="assets/pages/widget/amchart/gauge.js"></script>
-    <script src="assets/pages/widget/amchart/serial.js"></script>
-    <script src="assets/pages/widget/amchart/light.js"></script>
-    <script src="assets/pages/widget/amchart/pie.min.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <!-- menu js -->
-    <script src="assets/js/pcoded.min.js"></script>
-    <script src="assets/js/vertical-layout.min.js "></script>
-    <!-- custom js -->
-    <script type="text/javascript" src="assets/pages/dashboard/custom-dashboard.js"></script>
-    <script type="text/javascript" src="assets/js/script.js "></script>
+        <!-- Bootstrap JS and dependencies -->
+        <script src="assets/js/jquery/jquery.min.js"></script>
+        <script src="assets/js/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/js/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="assets/js/jquery-ui/jquery-ui.min.js "></script>
+        <script type="text/javascript" src="assets/js/popper.js/popper.min.js"></script>
+        <script type="text/javascript" src="assets/js/bootstrap/js/bootstrap.min.js "></script>
+        <script type="text/javascript" src="assets/pages/widget/excanvas.js "></script>
+        <!-- waves js -->
+        <script src="assets/pages/waves/js/waves.min.js"></script>
+        <!-- jquery slimscroll js -->
+        <script type="text/javascript" src="assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
+        <!-- modernizr js -->
+        <script type="text/javascript" src="assets/js/modernizr/modernizr.js "></script>
+        <!-- slimscroll js -->
+        <script type="text/javascript" src="assets/js/SmoothScroll.js"></script>
+        <script src="assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
+        <!-- Chart js -->
+        <script type="text/javascript" src="assets/js/chart.js/Chart.js"></script>
+        <!-- amchart js -->
+        <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+        <script src="assets/pages/widget/amchart/gauge.js"></script>
+        <script src="assets/pages/widget/amchart/serial.js"></script>
+        <script src="assets/pages/widget/amchart/light.js"></script>
+        <script src="assets/pages/widget/amchart/pie.min.js"></script>
+        <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+        <!-- menu js -->
+        <script src="assets/js/pcoded.min.js"></script>
+        <script src="assets/js/vertical-layout.min.js "></script>
+        <!-- custom js -->
+        <script type="text/javascript" src="assets/pages/dashboard/custom-dashboard.js"></script>
+        <script type="text/javascript" src="assets/js/script.js "></script>
 
 </body>
 
