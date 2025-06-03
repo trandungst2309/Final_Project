@@ -25,7 +25,7 @@ if (isset($_GET['logout'])) {
     unset($_SESSION['role']);
     session_destroy();
     setcookie(session_name(), '', time() - 3600);
-    header('Location: loginnew.php'); // Redirect đến trang login
+    header('Location: login.php'); // Redirect đến trang login
     exit;
 }
 

@@ -219,7 +219,7 @@ header {
 
             } else {
                 echo '<span class="me-2">Hi, Guest</span>';
-                echo '<a href="loginnew.php" class="bi bi-box-arrow-in-left fs-3"></a>';
+                echo '<a href="login.php" class="bi bi-box-arrow-in-left fs-3"></a>';
             }
 
         ?>

@@ -58,8 +58,8 @@
         <p style="text-align:center; font-size: 18px; color: #333;">
             <a href="#" style="margin-right: 10px;">Facebook</a>
             <a href="#" style="margin-right: 10px;">Instagram</a>
-            <a href="#" style="margin-right: 10px;">Twitter</a>
-            <a href="#">LinkedIn</a>
+            <a href="#" style="margin-right: 10px;">Youtube</a>
+            <a href="#" style="margin-right: 10px;">Tiktok</a>
         </p>
         <p style=" font-size: 18px; color: #333;">
             <strong>Note:</strong> Please do not share any sensitive personal information through email or phone.
@@ -77,7 +77,7 @@
             <strong>TD Motor Team</strong>
         </p>
         <br>
-        <img src="image/TDlogo.png" alt="TD Motor Logo" style="display: block; margin: 0 auto; width: 200px; height: auto;">
+        <img src="image/TDlogo.png" alt="TD Motor Logo" class="logo-img rounded-circle shadow" style="display: block; margin: 0 auto; height: 120px;">
         <br>
     </div>
     <?php include_once 'footer.php'; ?>

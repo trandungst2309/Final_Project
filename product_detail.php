@@ -460,7 +460,7 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
                     <button type="submit" name="add_to_cart" class="btn-add-to-order-custom">Add to Order</button>
                 </form>
                 <?php else : ?>
-                <p class="alert-info">Please <a href="loginnew.php">login</a> to add this product to your cart.</p>
+                <p class="alert-info">Please <a href="login.php">login</a> to add this product to your cart.</p>
                 <?php endif; ?>
 
                 <div class="btn-action-group">

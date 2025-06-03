@@ -69,259 +69,90 @@ $conn->close();
 <html lang="en">
 
 <head>
-    <title>Statistic Management</title>
-    <!-- HTML5 Shim and Respond.js IE10 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 10]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-      <![endif]-->
-    <!-- Meta -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="description" content="Admin dashboard with account management features." />
-    <meta name="keywords" content="bootstrap, admin template, admin dashboard, management" />
-    <meta name="author" content="codedthemes" />
-    <!-- Favicon icon -->
-    <!-- <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon"> -->
+    <meta charset="UTF-8">
+    <title>Feedback Management - TD Motor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="image/TDicon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+    .sidebar {
+        height: auto;
+        background-color: #343a40;
+    }
 
-    <!-- Google font -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="assets/css_admin/bootstrap/css/bootstrap.min.css">
-    <!-- waves.css -->
-    <link rel="stylesheet" href="assets/pages/waves/css_admin/waves.min.css" type="text/css" media="all">
-    <!-- themify icon -->
-    <link rel="stylesheet" type="text/css" href="assets/icon/themify-icons/themify-icons.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" type="text/css" href="assets/icon/font-awesome/css_admin/font-awesome.min.css">
-    <!-- scrollbar.css -->
-    <link rel="stylesheet" type="text/css" href="assets/css_admin/jquery.mCustomScrollbar.css">
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="assets/css_admin/style.css">
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 12px 20px;
+    }
+
+    .sidebar a:hover {
+        background-color: #495057;
+    }
+
+    .table img {
+        height: 60px;
+    }
+
+    .action-buttons a {
+        margin-right: 8px;
+    }
+
+    .logo-img {
+        height: 120px;
+        display: block;
+        margin: 20px auto;
+    }
+    </style>
 </head>
 
 <body>
-    <div class="pcoded" id="pcoded">
-        <div class="pcoded-container navbar-wrapper">
-            <!-- Nav Header -->
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
-                    <div class="navbar-logo">
-                        <a href="admin.php" class="logo-container">
-                            <img src="image/TDicon1.png" alt="Logo" class="logo-img" style="height: 100px;">
-                        </a>
-                        <a class="mobile-menu waves-effect waves-light" id="mobile-collapse" href="#!">
-                            <i class="ti-menu"></i>
-                        </a>
-                        <a class="mobile-options waves-effect waves-light">
-                            <i class="ti-more"></i>
-                        </a>
-                    </div>
-                    <div class="navbar-container container-fluid">
-                        <ul class="nav-left">
-                            <li>
-                                <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a>
-                                </div>
-                            </li>
-                            <li class="header-search">
-                                <div class="main-search morphsearch-search">
-                                    <div class="input-group">
-                                        <span class="input-group-addon search-close"><i class="ti-close"></i></span>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <a href="#!" onclick="javascript:toggleFullScreen()" class="waves-effect waves-light">
-                                    <i class="ti-fullscreen"></i>
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="nav-right">
-                            <li class="user-profile header-nav-profile">
-                                <!-- <a href="#!" class="waves-effect waves-light">
-                                    <?php
-                                    // Bắt đầu session nếu chưa được khởi tạo
-                                    if (session_status() == PHP_SESSION_NONE) {
-                                        session_start();
-                                    }
-                                    if (isset($_SESSION['customer_name'])) {
-                                        echo '<img class="img-radius" src="assets/images/avatar-4.jpg" alt="User-Profile-Image">'; // Ảnh đại diện mặc định
-                                        echo '<span>' . htmlspecialchars($_SESSION['customer_name']) . '</span>';
-                                    } else {
-                                        echo '<img class="img-radius" src="assets/images/avatar-4.jpg" alt="User-Profile-Image">';
-                                        echo '<span>Admin</span>';
-                                    }
-                                    ?>
-                                    <i class="ti-angle-down"></i>
-                                </a> -->
-                                <ul class="show-notification profile-notification">
-                                    <li class="waves-effect waves-light">
-                                        <a href="profile.php">
-                                            <i class="ti-user"></i> Profile
-                                        </a>
-                                    </li>
-                                    <li class="waves-effect waves-light">
-                                        <a href="logout.php">
-                                            <i class="ti-layout-sidebar-left"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+        <div class="d-flex align-items-center logo">
+            <a href="admin.php" class="d-flex align-items-center text-decoration-none">
+                <img src="image/TDicon1.png" alt="TD Motor Logo" style="height: 70px;">
+                <span class="logo-text ms-3 d-none d-md-inline"
+                    style="color: whitesmoke; font-weight:bold; font-size:larger">TD Motor Admin Page</span>
+            </a>
+        </div>
+        <div class="ms-auto d-flex align-items-center">
+            <span class="text-white me-3">
+                <?php echo htmlspecialchars($_SESSION['customer_name'] ?? 'Admin'); ?>
+            </span>
+            <a href="logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+        </div>
+    </nav>
 
+    <!-- Layout -->
+    <div class="container-fluid">
+        <div class="row">
             <!-- Sidebar -->
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                        <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
-                        <div class="pcoded-inner-navbar main-menu">
-                            <!-- <div class="main-menu-header">
-                                <div class="user-details">
-                                </div>
-                            </div> -->
-                            <br>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="active">
-                                    <a href="admin.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-home"></i></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.dash.main">Dashboard</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                                <li class="pcoded-hasmenu">
-                                    <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
-                                        <span class="pcoded-mtext"
-                                            data-i18n="nav.basic-components.main">Components</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class="">
-                                            <a href="manage_products.php" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext"
-                                                    data-i18n="nav.basic-components.alert">Product Management</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="manage_account.php" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext"
-                                                    data-i18n="nav.basic-components.breadcrumbs">Account
-                                                    Management</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class=" ">
-                                            <a href="manage_order.php" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Order
-                                                    Management</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="homepage.php" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">TD
-                                                    Website</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li>
-                                    <a href="statistic.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-layers"></i></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Statistics
-                                            Management</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="manage_contact.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-headphone-alt"></i></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Contact
-                                            management</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="manage_feedback.php" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-comment-alt"></i></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.form-components.main">Feedback
-                                            management</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                </li>
-                                <li class="pcoded-hasmenu">
-                                    <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                        <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
-                                        <span class="pcoded-mtext" data-i18n="nav.basic-components.main">Pages</span>
-                                        <span class="pcoded-mcaret"></span>
-                                    </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class=" ">
-                                            <a href="loginnew.php" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext"
-                                                    data-i18n="nav.basic-components.alert">Login</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="register.php" class="waves-effect waves-dark">
-                                                <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                                <span class="pcoded-mtext"
-                                                    data-i18n="nav.basic-components.alert">Register</span>
-                                                <span class="pcoded-mcaret"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                    <div class="pcoded-content">
-                        <div class="page-header">
-                            <div class="page-block">
-                                <div class="row align-items-center">
-                                    <div class="col-md-8">
-                                        <div class="page-header-title">
-                                            <h5 class="m-b-10">Hello Admin</h5>
-                                            <p class="m-b-0">Welcome to the admin page</p>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="col-md-4">
-                                        <ul class="breadcrumb-title">
-                                            <li class="breadcrumb-item">
-                                                <a href="#"> <i class="fa fa-home"></i> </a>
-                                            </li>
-                                        </ul>
-                                    </div> -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pcoded-content">
+            <aside class="col-md-3 col-lg-2 sidebar p-0">
+                <div class="p-3 text-white fw-bold border-bottom"><a href="admin.php">Dashboard</a></div>
+                <a href="manage_products.php"><i class="bi bi-box"></i> Product Management</a>
+                <a href="manage_account.php"><i class="bi bi-person"></i> Account Management</a>
+                <a href="manage_order.php"><i class="bi bi-cart"></i> Order Management</a>
+                <a href="statistic.php"><i class="bi bi-bar-chart"></i> Statistics</a>
+                <a href="manage_contact.php"><i class="bi bi-headset"></i> Contact Management</a>
+                <a href="manage_feedback.php"><i class="bi bi-chat-dots"></i> Feedback Management</a>
+                <hr class="text-white">
+                <a href="homepage.php"><i class="bi bi-house-door"></i> Back to TD Website</a>
+            </aside>
+
+            <!-- Content -->
+            <main class="col-md-9 col-lg-10 p-4">
+                <div class="pcoded-content">
                         <div class="pcoded-inner-content">
                             <div class="main-body">
                                 <div class="page-wrapper">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
-                                                <div class="card-header">
-                                                    <h5>Statistics Management</h5>
+                                                <div class="card-header" style="color: red; font-weight: bold;">
+                                                    <h2>Statistics Management</h2>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="row">
@@ -366,7 +197,7 @@ $conn->close();
                                                                 </div>
                                                                 <div class="card-block">
                                                                     <form method="POST" action="">
-                                                                        <div class="form-group">
+                                                                        <div class="form-group" style="margin: 15px;">
                                                                             <label for="month">Select Month:</label>
                                                                             <select class="form-control" id="month"
                                                                                 name="month">
@@ -378,12 +209,11 @@ $conn->close();
                                                                             </select>
                                                                         </div>
                                                                         <button type="submit"
-                                                                            class="btn btn-primary">View Orders</button>
+                                                                            class="btn btn-primary" style="margin-bottom: 10px; margin-left: 10px">View Orders</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <!-- Display Orders -->
                                                         <div class="col-md-12">
                                                             <?php if (!empty($monthOrders)): ?>
@@ -444,45 +274,13 @@ $conn->close();
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Footer -->
-            </div>
         </div>
+    </div>
+    </main>
+    </div>
+    </div>
 
-        <!-- Bootstrap JS and dependencies -->
-        <script src="assets/js/jquery/jquery.min.js"></script>
-        <script src="assets/js/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="assets/js/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="assets/js/jquery-ui/jquery-ui.min.js "></script>
-        <script type="text/javascript" src="assets/js/popper.js/popper.min.js"></script>
-        <script type="text/javascript" src="assets/js/bootstrap/js/bootstrap.min.js "></script>
-        <script type="text/javascript" src="assets/pages/widget/excanvas.js "></script>
-        <!-- waves js -->
-        <script src="assets/pages/waves/js/waves.min.js"></script>
-        <!-- jquery slimscroll js -->
-        <script type="text/javascript" src="assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
-        <!-- modernizr js -->
-        <script type="text/javascript" src="assets/js/modernizr/modernizr.js "></script>
-        <!-- slimscroll js -->
-        <script type="text/javascript" src="assets/js/SmoothScroll.js"></script>
-        <script src="assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
-        <!-- Chart js -->
-        <script type="text/javascript" src="assets/js/chart.js/Chart.js"></script>
-        <!-- amchart js -->
-        <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-        <script src="assets/pages/widget/amchart/gauge.js"></script>
-        <script src="assets/pages/widget/amchart/serial.js"></script>
-        <script src="assets/pages/widget/amchart/light.js"></script>
-        <script src="assets/pages/widget/amchart/pie.min.js"></script>
-        <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-        <!-- menu js -->
-        <script src="assets/js/pcoded.min.js"></script>
-        <script src="assets/js/vertical-layout.min.js "></script>
-        <!-- custom js -->
-        <script type="text/javascript" src="assets/pages/dashboard/custom-dashboard.js"></script>
-        <script type="text/javascript" src="assets/js/script.js "></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

@@ -68,7 +68,7 @@ if (isset($_POST['btnRegister'])) {
             $insert_sql = "INSERT INTO customer (customer_name, email, pass, phone, address, role) VALUES (?, ?, ?, ?, ?, 'customer')";
             $stmt = $db_link->prepare($insert_sql);
             if ($stmt->execute([$fullname, $email, $pass, $phone, $address])) {
-                echo "<script>alert('Account created successfully!'); window.location.href='loginnew.php';</script>";
+                echo "<script>alert('Account created successfully!'); window.location.href='login.php';</script>";
                 exit(); // Ensure script termination after redirection
             } else {
                 echo "Error: " . $stmt->errorInfo()[2];
@@ -129,7 +129,7 @@ if (isset($_POST['btnRegister'])) {
                 </button>
 
                 <!-- New Back to Login link -->
-                <a href="loginnew.php" class="button__back">
+                <a href="login.php" class="button__back">
                     <span class="button__text">Back to Login Page</span>
                 </a>
 

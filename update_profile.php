@@ -3,7 +3,7 @@ session_start();
 include_once 'connect.php';
 
 if (!isset($_SESSION['customer_id'])) {
-    header('Location: loginnew.php');
+    header('Location: login.php');
     exit();
 }
 

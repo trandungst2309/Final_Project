@@ -8,7 +8,7 @@ $db_link = $conn->connectToPDO();
 
 // Kiểm tra trạng thái đăng nhập
 if (!isset($_SESSION['customer_id'])) {
-    header('Location: loginnew.php');
+    header('Location: login.php');
     exit();
 }
 

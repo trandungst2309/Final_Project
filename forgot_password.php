@@ -48,7 +48,7 @@ if (isset($_POST['btnSavePassword']) && isset($_SESSION['step']) && $_SESSION['s
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(function() {
-                        window.location.href='loginnew.php';
+                        window.location.href='login.php';
                     });
                 });
             </script>";
@@ -89,7 +89,7 @@ if (isset($_POST['btnSavePassword']) && isset($_SESSION['step']) && $_SESSION['s
                             required>
                     </div>
                     <button type="submit" name="btnSubmitEmail" class="login__submit">Send</button>
-                    <a href="loginnew.php" class="button__back">Back To Login Page</a>
+                    <a href="login.php" class="button__back">Back To Login Page</a>
                     <?php else: ?>
                     <!-- Step 2: New password input -->
                     <div class="login__field">
@@ -101,7 +101,7 @@ if (isset($_POST['btnSavePassword']) && isset($_SESSION['step']) && $_SESSION['s
                             required>
                     </div>
                     <button type="submit" name="btnSavePassword" class="login__submit">Save Changes</button>
-                    <a href="loginnew.php" class="button__back">Back To Login Page</a>
+                    <a href="login.php" class="button__back">Back To Login Page</a>
                     <?php endif; ?>
                 </form>
             </div>
