@@ -23,9 +23,27 @@ $result = mysqli_query($conn, $sql);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+    body {
+        min-height: 100vh; /* Đảm bảo body đủ cao để chứa nội dung */
+        display: flex;
+        flex-direction: column;
+    }
+    .navbar {
+        flex-shrink: 0; /* Đảm bảo navbar không co lại */
+    }
+    .container-fluid {
+        flex-grow: 1; /* Đảm bảo container-fluid chiếm hết không gian còn lại */
+        display: flex;
+        flex-direction: column; /* Đặt flex-direction cho container-fluid */
+    }
+    .row {
+        flex-grow: 1; /* Đảm bảo hàng chiếm hết không gian còn lại */
+    }
+
     .sidebar {
-        height: auto;
+        height: 100%; /* Đặt chiều cao 100% của phần tử cha (row) */
         background-color: #343a40;
+        /* Optional: overflow-y: auto; nếu nội dung sidebar có thể dài hơn màn hình */
     }
 
     .sidebar a {
@@ -52,6 +70,11 @@ $result = mysqli_query($conn, $sql);
         display: block;
         margin: 20px auto;
     }
+    /* Đảm bảo main content chiếm hết chiều cao còn lại và có thể cuộn */
+    main {
+        flex-grow: 1;
+        overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
+    }
     </style>
 </head>
 
@@ -77,9 +100,11 @@ $result = mysqli_query($conn, $sql);
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <aside class="col-md-3 col-lg-2 sidebar p-0">
+            <aside class="col-md-3 col-lg-2 sidebar p-0" style="height:auto">
                 <div class="p-3 text-white fw-bold border-bottom"><a href="admin.php">Dashboard</a></div>
                 <a href="manage_products.php"><i class="bi bi-box"></i> Product Management</a>
+                <a href="manage_product_type.php"><i class="bi bi-tags"></i> Product Type Management</a>
+                <a href="manage_producer.php"><i class="bi bi-building"></i> Producer Management</a>
                 <a href="manage_account.php"><i class="bi bi-person"></i> Account Management</a>
                 <a href="manage_order.php"><i class="bi bi-cart"></i> Order Management</a>
                 <a href="statistic.php"><i class="bi bi-bar-chart"></i> Statistics</a>

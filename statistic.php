@@ -76,9 +76,27 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+    body {
+        min-height: 100vh; /* Đảm bảo body đủ cao để chứa nội dung */
+        display: flex;
+        flex-direction: column;
+    }
+    .navbar {
+        flex-shrink: 0; /* Đảm bảo navbar không co lại */
+    }
+    .container-fluid {
+        flex-grow: 1; /* Đảm bảo container-fluid chiếm hết không gian còn lại */
+        display: flex;
+        flex-direction: column; /* Đặt flex-direction cho container-fluid */
+    }
+    .row {
+        flex-grow: 1; /* Đảm bảo hàng chiếm hết không gian còn lại */
+    }
+
     .sidebar {
-        height: auto;
+        height: 100%; /* Đặt chiều cao 100% của phần tử cha (row) */
         background-color: #343a40;
+        /* Optional: overflow-y: auto; nếu nội dung sidebar có thể dài hơn màn hình */
     }
 
     .sidebar a {
@@ -105,6 +123,11 @@ $conn->close();
         display: block;
         margin: 20px auto;
     }
+    /* Đảm bảo main content chiếm hết chiều cao còn lại và có thể cuộn */
+    main {
+        flex-grow: 1;
+        overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
+    }
     </style>
 </head>
 
@@ -130,9 +153,11 @@ $conn->close();
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <aside class="col-md-3 col-lg-2 sidebar p-0">
+            <aside class="col-md-3 col-lg-2 sidebar p-0" style="height:auto">
                 <div class="p-3 text-white fw-bold border-bottom"><a href="admin.php">Dashboard</a></div>
                 <a href="manage_products.php"><i class="bi bi-box"></i> Product Management</a>
+                <a href="manage_product_type.php"><i class="bi bi-tags"></i> Product Type Management</a>
+                <a href="manage_producer.php"><i class="bi bi-building"></i> Producer Management</a>
                 <a href="manage_account.php"><i class="bi bi-person"></i> Account Management</a>
                 <a href="manage_order.php"><i class="bi bi-cart"></i> Order Management</a>
                 <a href="statistic.php"><i class="bi bi-bar-chart"></i> Statistics</a>
@@ -145,126 +170,126 @@ $conn->close();
             <!-- Content -->
             <main class="col-md-9 col-lg-10 p-4">
                 <div class="pcoded-content">
-                        <div class="pcoded-inner-content">
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-header" style="color: red; font-weight: bold;">
-                                                    <h2>Statistics Management</h2>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-md-4 mb-3">
-                                                            <div class="card">
-                                                                <div class="card-header">
-                                                                    <h5 class="card-title">Total Quantity Sold</h5>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <p class="card-text">
-                                                                        <?php echo number_format($totalQuantity); ?></p>
-                                                                </div>
+                    <div class="pcoded-inner-content">
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header" style="color: red; font-weight: bold;">
+                                                <h2>Statistics Management</h2>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h5 class="card-title">Total Quantity Sold</h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <p class="card-text">
+                                                                    <?php echo number_format($totalQuantity); ?></p>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <div class="card">
-                                                                <div class="card-header">
-                                                                    <h5 class="card-title">Total Revenue</h5>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <p class="card-text">
-                                                                        $<?php echo number_format($totalRevenue); ?></p>
-                                                                </div>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h5 class="card-title">Total Revenue</h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <p class="card-text">
+                                                                    $<?php echo number_format($totalRevenue); ?></p>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <div class="card">
-                                                                <div class="card-header">
-                                                                    <h5 class="card-title">Total Orders</h5>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <p class="card-text">
-                                                                        <?php echo number_format($totalOrders); ?></p>
-                                                                </div>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h5 class="card-title">Total Orders</h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <p class="card-text">
+                                                                    <?php echo number_format($totalOrders); ?></p>
                                                             </div>
                                                         </div>
-                                                        <!-- Filter by Month -->
-                                                        <div class="col-md-12">
-                                                            <div class="card">
-                                                                <div class="card-header">
-                                                                    <h5>Filter Orders by Month</h5>
-                                                                </div>
-                                                                <div class="card-block">
-                                                                    <form method="POST" action="">
-                                                                        <div class="form-group" style="margin: 15px;">
-                                                                            <label for="month">Select Month:</label>
-                                                                            <select class="form-control" id="month"
-                                                                                name="month">
-                                                                                <?php for ($i = 1; $i <= 12; $i++): ?>
-                                                                                <option value="<?php echo $i; ?>">
-                                                                                    <?php echo date('F', mktime(0, 0, 0, $i, 10)); ?>
-                                                                                </option>
-                                                                                <?php endfor; ?>
-                                                                            </select>
-                                                                        </div>
-                                                                        <button type="submit"
-                                                                            class="btn btn-primary" style="margin-bottom: 10px; margin-left: 10px">View Orders</button>
-                                                                    </form>
-                                                                </div>
+                                                    </div>
+                                                    <!-- Filter by Month -->
+                                                    <div class="col-md-12">
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h5>Filter Orders by Month</h5>
                                                             </div>
-                                                        </div>
-                                                        <!-- Display Orders -->
-                                                        <div class="col-md-12">
-                                                            <?php if (!empty($monthOrders)): ?>
-                                                            <div class="card">
-                                                                <div class="card-header">
-                                                                    <h5>Orders for
-                                                                        <?php echo date('F', mktime(0, 0, 0, $selected_month, 10)); ?>
-                                                                    </h5>
-                                                                </div>
-                                                                <div class="card-block">
-                                                                    <div class="table-responsive">
-                                                                        <table class="table table-bordered">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>Order ID</th>
-                                                                                    <th>Date</th>
-                                                                                    <th>Product Name</th>
-                                                                                    <th>Price</th>
-                                                                                    <th>Quantity</th>
-                                                                                    <th>Status</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <?php foreach ($monthOrders as $order): ?>
-                                                                                <tr>
-                                                                                    <td><?php echo $order['order_id']; ?>
-                                                                                    </td>
-                                                                                    <td><?php echo $order['order_date']; ?>
-                                                                                    </td>
-                                                                                    <td><?php echo $order['product_name']; ?>
-                                                                                    </td>
-                                                                                    <td>$<?php echo number_format($order['product_price']); ?>
-                                                                                    </td>
-                                                                                    <td><?php echo $order['quantity']; ?>
-                                                                                    </td>
-                                                                                    <td><?php echo $order['order_status']; ?>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <?php endforeach; ?>
-                                                                            </tbody>
-                                                                        </table>
+                                                            <div class="card-block">
+                                                                <form method="POST" action="">
+                                                                    <div class="form-group" style="margin: 15px;">
+                                                                        <label for="month">Select Month:</label>
+                                                                        <select class="form-control" id="month"
+                                                                            name="month">
+                                                                            <?php for ($i = 1; $i <= 12; $i++): ?>
+                                                                            <option value="<?php echo $i; ?>">
+                                                                                <?php echo date('F', mktime(0, 0, 0, $i, 10)); ?>
+                                                                            </option>
+                                                                            <?php endfor; ?>
+                                                                        </select>
                                                                     </div>
+                                                                    <button type="submit" class="btn btn-primary"
+                                                                        style="margin-bottom: 10px; margin-left: 10px">View
+                                                                        Orders</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Display Orders -->
+                                                    <div class="col-md-12">
+                                                        <?php if (!empty($monthOrders)): ?>
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h5>Orders for
+                                                                    <?php echo date('F', mktime(0, 0, 0, $selected_month, 10)); ?>
+                                                                </h5>
+                                                            </div>
+                                                            <div class="card-block">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Order ID</th>
+                                                                                <th>Date</th>
+                                                                                <th>Product Name</th>
+                                                                                <th>Price</th>
+                                                                                <th>Quantity</th>
+                                                                                <th>Status</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <?php foreach ($monthOrders as $order): ?>
+                                                                            <tr>
+                                                                                <td><?php echo $order['order_id']; ?>
+                                                                                </td>
+                                                                                <td><?php echo $order['order_date']; ?>
+                                                                                </td>
+                                                                                <td><?php echo $order['product_name']; ?>
+                                                                                </td>
+                                                                                <td>$<?php echo number_format($order['product_price']); ?>
+                                                                                </td>
+                                                                                <td><?php echo $order['quantity']; ?>
+                                                                                </td>
+                                                                                <td><?php echo $order['order_status']; ?>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <?php endforeach; ?>
+                                                                        </tbody>
+                                                                    </table>
                                                                 </div>
                                                             </div>
-                                                            <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
-                                                            <div class="alert alert-warning" role="alert">
-                                                                No orders found for this month.
-                                                            </div>
-                                                            <?php endif; ?>
-
                                                         </div>
+                                                        <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
+                                                        <div class="alert alert-warning" role="alert">
+                                                            No orders found for this month.
+                                                        </div>
+                                                        <?php endif; ?>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -274,6 +299,7 @@ $conn->close();
                             </div>
                         </div>
                     </div>
+                </div>
         </div>
     </div>
     </main>

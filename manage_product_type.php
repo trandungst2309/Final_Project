@@ -8,8 +8,8 @@ require 'connect.php';
 $connect = new Connect();
 $conn = $connect->connectToMySQL();
 
-
-$sql = "SELECT * FROM product";
+// Xử lý thêm/sửa/xoá nếu cần ở đây
+$sql = "SELECT * FROM product_type";
 $result = mysqli_query($conn, $sql);
 ?>
 <!DOCTYPE html>
@@ -17,7 +17,7 @@ $result = mysqli_query($conn, $sql);
 
 <head>
     <meta charset="UTF-8">
-    <title>Feedback Management - TD Motor</title>
+    <title>Product Type Management - TD Motor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="image/TDicon.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -116,61 +116,32 @@ $result = mysqli_query($conn, $sql);
 
             <!-- Content -->
             <main class="col-md-9 col-lg-10 p-4">
-                <div class="pcoded-inner-content">
-                    <!-- Main-body start -->
-                    <div class="container mt-4">
-                        <h2 style="color: red; font-weight: bold;">Customer Feedback</h2>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Customer Name</th>
-                                        <th>Product Name</th>
-                                        <th>Content</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                    // Database connection
-                    $dsn = 'mysql:host=localhost;dbname=motorbike';
-                    $username = 'root';
-                    $password = '';
-                    
-                    try {
-                        $pdo = new PDO($dsn, $username, $password);
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        
-                        // Fetch feedbacks
-                        $sql = 'SELECT f.content, p.product_name, c.customer_name, f.feedback_date
-                                FROM feedback f
-                                JOIN product p ON f.product_id = p.product_id
-                                JOIN customer c ON f.customer_id = c.customer_id';
-                        $stmt = $pdo->query($sql);
-                        
-                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                            echo '<tr>';
-                            echo '<td>' . htmlspecialchars($row['customer_name']) . '</td>';
-                            echo '<td>' . htmlspecialchars($row['product_name']) . '</td>';
-                            echo '<td>' . htmlspecialchars($row['content']) . '</td>';
-                            echo '<td>' . htmlspecialchars($row['feedback_date']) . '</td>';
-                            echo '</tr>';
-                        }
-                    } catch (PDOException $e) {
-                        echo 'Database error: ' . $e->getMessage();
-                    }
-                    ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <h2 style="color: red; font-weight: bold;">Product Type Management</h2>
+                <a href="add_product_type.php" class="btn btn-info mb-3">Add Product Type</a>
+                <a href="admin.php" class="btn btn-success mb-3">Back to Homepage</a>
 
-                </div>
-                
+                <?php
+                if ($result && mysqli_num_rows($result) > 0) {
+                    echo "<table class='table table-striped'>";
+                    echo "<thead class='table-dark'><tr><th>ID</th><th>Name</th><th>Actions</th></tr></thead><tbody>";
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<tr>";
+                        echo "<td>" . $row['product_type_id'] . "</td>";
+                        echo "<td>" . htmlspecialchars($row['product_type_name']) . "</td>";
+                        echo "<td>
+                                <a href='edit_product_type.php?id=" . $row['product_type_id'] . "' class='btn btn-primary btn-sm'>Edit</a>
+                                <a href='delete_product_type.php?id=" . $row['product_type_id'] . "' class='btn btn-danger btn-sm' onclick=\"return confirm('Are you sure?');\">Delete</a>
+                              </td>";
+                        echo "</tr>";
+                    }
+                    echo "</tbody></table>";
+                } else {
+                    echo "<div class='alert alert-info'>No product types found.</div>";
+                }
+                mysqli_close($conn);
+                ?>
+            </main>
         </div>
-    </div>
-    </main>
-    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

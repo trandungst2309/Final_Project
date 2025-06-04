@@ -145,7 +145,8 @@ header {
 
 .nav-link-active {
     color: red !important;
-
+    font-weight: bold !important;
+    text-decoration: none !important;
 }
 
 .nav-link-active:hover {
