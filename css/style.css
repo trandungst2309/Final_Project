@@ -80,7 +80,7 @@ header .navbar a {
 }
 
 header .navbar a:hover {
-    color: chocolate;
+    color: red;
 }
 
 header .icons a {
@@ -93,7 +93,7 @@ header .icons a {
 
 
 header .icons a:hover {
-    color: chocolate;
+    color: red;
 }
 
 header #toggler {
@@ -279,7 +279,7 @@ header .fa-bars {
 }
 
 .card-img-top {
-    border-bottom: 2px solid chocolate; /* Border for image */
+    border-bottom: 2px solid red; /* Border for image */
     padding-bottom: 1rem; /* Space between image and text */
 }
 

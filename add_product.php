@@ -53,15 +53,16 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
         <<div class="d-flex align-items-center logo">
             <a href="admin.php" class="d-flex align-items-center text-decoration-none">
                 <img src="image/TDicon1.png" alt="TD Motor Logo" style="height: 70px;">
-                <span class="logo-text ms-3 d-none d-md-inline" style="color: whitesmoke; font-weight:bold; font-size:larger">TD Motor Admin Page</span>
-            </a>            
-        </div>
-        <div class="ms-auto d-flex align-items-center">
-            <span class="text-white me-3">
-                <?php echo htmlspecialchars($_SESSION['customer_name'] ?? 'Admin'); ?>
-            </span>
-            <a href="logout.php" class="btn btn-outline-light btn-sm">Logout</a>
-        </div>
+                <span class="logo-text ms-3 d-none d-md-inline"
+                    style="color: whitesmoke; font-weight:bold; font-size:larger">TD Motor Admin Page</span>
+            </a>
+            </div>
+            <div class="ms-auto d-flex align-items-center">
+                <span class="text-white me-3">
+                    <?php echo htmlspecialchars($_SESSION['customer_name'] ?? 'Admin'); ?>
+                </span>
+                <a href="logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+            </div>
     </nav>
 
     <!-- Layout -->
@@ -83,8 +84,8 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
             <!-- Content -->
             <main class="col-md-9 col-lg-10 p-4">
                 <div class="container mt-5">
-        <h2 class="text-center"><?php echo isset($_GET['edit']) ? 'Edit Product' : 'Add Product'; ?></h2>
-        <?php
+                    <h2 class="text-center"><?php echo isset($_GET['edit']) ? 'Editing Product' : 'Adding Product'; ?></h2>
+                    <?php
         // Check if we are editing a product
         $isEdit = isset($_GET['edit']);
         $product = null;
@@ -104,85 +105,95 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
             }
         }
         ?>
-        <form action="#" method="post" enctype="multipart/form-data" class="mt-4">
-            <input type="hidden" name="product_id" value="<?php echo $isEdit ? $product['product_id'] : ''; ?>">
+                    <form action="#" method="post" enctype="multipart/form-data" class="mt-4">
+                        <input type="hidden" name="product_id"
+                            value="<?php echo $isEdit ? $product['product_id'] : ''; ?>">
 
-            <div class="form-group">
-                <label for="product_name">Product Name:</label>
-                <input type="text" id="product_name" name="product_name" class="form-control" value="<?php echo $isEdit ? $product['product_name'] : ''; ?>" required>
-            </div>
+                        <div class="form-group">
+                            <label for="product_name">Product Name:</label>
+                            <input type="text" id="product_name" name="product_name" class="form-control"
+                                value="<?php echo $isEdit ? $product['product_name'] : ''; ?>" required>
+                        </div>
 
-            <div class="form-group">
-                <label for="product_type_id">Product Type Name:</label>
+                        <div class="form-group">
+                            <label for="product_type_id">Product Type Name:</label>
+                            <?php
+                                $db_link = $conn->connectToMySQL(); // Use the MySQL connection
+                                $sql = "SELECT product_type_id, product_type_name FROM product_type ORDER BY product_type_id";
+                                $result = mysqli_query($db_link, $sql); // Use the MySQLi connection here
+                                echo '<select id="product_type_id" name="product_type_id" class="form-control" required>';
+                                // while ($row = mysqli_fetch_assoc($result)) {
+                                //     $selected = $isEdit && $product['product_type_id'] == $row['product_type_id'] ? 'selected' : '';
+                                //     echo "<option value='{$row['product_type_id']}' $selected>{$row['product_type_id']}</option>";
+                                // }
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    // Kiểm tra điều kiện chọn nếu là chỉnh sửa
+                                    $selected = $isEdit && $product['product_type_id'] == $row['product_type_id'] ? 'selected' : '';
+                                    // Hiển thị tên loại sản phẩm trong tùy chọn
+                                    echo "<option value='{$row['product_type_id']}' $selected>{$row['product_type_name']}</option>";
+                                }
+                                echo '</select>';
+                            ?>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product_description">Product Description:</label>
+                            <textarea id="product_description" name="product_description" class="form-control"
+                                required><?php echo $isEdit ? $product['product_description'] : ''; ?></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product_price">Product Price:</label>
+                            <input type="number" id="product_price" name="product_price" step="0.01"
+                                class="form-control" value="<?php echo $isEdit ? $product['product_price'] : ''; ?>"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="producer_id">Producer:</label>
+                            <?php
+                                $db_link = $conn->connectToMySQL();
+                                $sql = "SELECT * FROM producer ORDER BY producer_name";
+                                $result = mysqli_query($db_link, $sql);
+
+                                echo '<select id="producer_id" name="producer_id" class="form-control" required>';
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    $selected = $isEdit && $product['producer_id'] == $row['producer_id'] ? 'selected' : '';
+                                    echo "<option value='{$row['producer_id']}' $selected>{$row['producer_name']}</option>";
+                                }
+                                echo '</select>';
+                            ?>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" id="quantity" name="quantity" class="form-control"
+                                value="<?php echo $isEdit ? $product['quantity'] : ''; ?>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product_img">Product Image:</label>
+                            <input type="file" id="product_img" name="product_img" class="form-control"
+                                <?php echo !$isEdit ? 'required' : ''; ?>>
+                            <?php if ($isEdit && $product['product_img']) { ?>
+                            <img src="<?php echo $product['product_img']; ?>" alt="Product Image"
+                                style="width:100px; height:auto;">
+                            <?php } ?>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product_video_url">Product Video URL:</label>
+                            <input type="url" id="product_video_url" name="product_video_url" class="form-control"
+                                value="<?php echo $isEdit ? $product['product_video_url'] : ''; ?>">
+                        </div>
+
+                        <button type="submit"
+                            class="btn btn-primary"><?php echo $isEdit ? 'Update Product' : 'Add Product'; ?></button>
+                        <a href="manage_products.php" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+
                 <?php
-                $db_link = $conn->connectToMySQL(); // Use the MySQL connection
-                $sql = "SELECT product_type_id, product_type_name FROM product_type ORDER BY product_type_id";
-                $result = mysqli_query($db_link, $sql); // Use the MySQLi connection here
-                echo '<select id="product_type_id" name="product_type_id" class="form-control" required>';
-                // while ($row = mysqli_fetch_assoc($result)) {
-                //     $selected = $isEdit && $product['product_type_id'] == $row['product_type_id'] ? 'selected' : '';
-                //     echo "<option value='{$row['product_type_id']}' $selected>{$row['product_type_id']}</option>";
-                // }
-                while ($row = mysqli_fetch_assoc($result)) {
-                    // Kiểm tra điều kiện chọn nếu là chỉnh sửa
-                    $selected = $isEdit && $product['product_type_id'] == $row['product_type_id'] ? 'selected' : '';
-                    // Hiển thị tên loại sản phẩm trong tùy chọn
-                    echo "<option value='{$row['product_type_id']}' $selected>{$row['product_type_name']}</option>";
-                }
-                echo '</select>';
-                ?>
-            </div>
-
-            <div class="form-group">
-                <label for="product_description">Product Description:</label>
-                <textarea id="product_description" name="product_description" class="form-control" required><?php echo $isEdit ? $product['product_description'] : ''; ?></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="product_price">Product Price:</label>
-                <input type="number" id="product_price" name="product_price" step="0.01" class="form-control" value="<?php echo $isEdit ? $product['product_price'] : ''; ?>" required>
-            </div>
-
-            <div class="form-group">
-                <label for="producer_id">Producer ID:</label>
-                <?php
-                $db_link = $conn->connectToMySQL(); // Use the MySQL connection
-                $sql = "SELECT * FROM producer ORDER BY producer_id";
-                $result = mysqli_query($db_link, $sql); // Use the MySQLi connection here
-
-                echo '<select id="producer_id" name="producer_id" class="form-control" required>';
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $selected = $isEdit && $product['producer_id'] == $row['producer_id'] ? 'selected' : '';
-                    echo "<option value='{$row['producer_id']}' $selected>{$row['producer_id']}</option>";
-                }
-                echo '</select>';
-                ?>
-            </div>
-
-            <div class="form-group">
-                <label for="quantity">Quantity:</label>
-                <input type="number" id="quantity" name="quantity" class="form-control" value="<?php echo $isEdit ? $product['quantity'] : ''; ?>" required>
-            </div>
-
-            <div class="form-group">
-                <label for="product_img">Product Image:</label>
-                <input type="file" id="product_img" name="product_img" class="form-control" <?php echo !$isEdit ? 'required' : ''; ?>>
-                <?php if ($isEdit && $product['product_img']) { ?>
-                    <img src="<?php echo $product['product_img']; ?>" alt="Product Image" style="width:100px; height:auto;">
-                <?php } ?>
-            </div>
-
-            <div class="form-group">
-                <label for="product_video_url">Product Video URL:</label>
-                <input type="url" id="product_video_url" name="product_video_url" class="form-control" value="<?php echo $isEdit ? $product['product_video_url'] : ''; ?>">
-            </div>
-
-            <button type="submit" class="btn btn-primary"><?php echo $isEdit ? 'Update Product' : 'Add Product'; ?></button>
-            <a href="manage_products.php" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
-
-    <?php
 
     function redirect($url)
     {
