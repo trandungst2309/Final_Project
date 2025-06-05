@@ -1,29 +1,18 @@
 <?php
-include 'connect.php'; // Include the database connection file
+include 'connect.php';
 session_start();
-?>
-
-<?php
 include_once 'header.php';
 ?>
-
 <br><br><br><br><br><br><br>
-
 <?php
-// Check if the user is logged in and pass this information to JavaScript
 $isLoggedIn = isset($_SESSION['customer_id']) ? 'true' : 'false';
 ?>
-
 <script>
-var isLoggedIn = <?= json_encode($isLoggedIn) ?>; // Pass PHP variable to JavaScript
+var isLoggedIn = <?= json_encode($isLoggedIn) ?>;
 </script>
-
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['txtSearch'])) {
-    include_once("connect.php");
-
     $nameP = $_POST['txtSearch'];
-
     $conn = new Connect();
     $db_link = $conn->connectToPDO();
 
@@ -39,11 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['txtSearch'])) {
         echo "<div class='row justify-content-center'>";
         foreach ($results as $r) {
 ?>
-<div class='col-md-4 mb-4' style="padding: 10px;">
-    <div class='card' style="text-align: center; padding: 20px;">
-        <img src='./uploads/<?= htmlspecialchars($r["product_img"]) ?>'
-            alt='<?= htmlspecialchars($r["product_name"]) ?>' class='card-img-top' />
-        <div class="card-body">
+<div class="col-md-4 mb-4 d-flex">
+    <div class="card w-100 d-flex flex-column" style="text-align: center; padding: 20px; height: 100%;">
+        <div class="image-container"
+            style="height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="./uploads/<?= htmlspecialchars($r["product_img"]) ?>"
+                alt="<?= htmlspecialchars($r["product_name"]) ?>" class="card-img-top img-fluid"
+                style="max-height: 100%; width: auto;" />
+        </div>
+        <div class="card-body d-flex flex-column justify-content-between">
             <a href="product_detail.php?product_id=<?= htmlspecialchars($r['product_id']) ?>"
                 class="text-decoration-none">
                 <h5 class="card-title"><?= htmlspecialchars($r['product_name']) ?></h5>
@@ -54,9 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['txtSearch'])) {
                 <input type="hidden" name="product_name" value="<?= htmlspecialchars($r['product_name']) ?>">
                 <input type="hidden" name="product_price" value="<?= htmlspecialchars($r['product_price']) ?>">
                 <input type="hidden" name="product_img" value="<?= htmlspecialchars($r['product_img']) ?>">
-                <button type="submit" name="add_to_cart" class="btn btn-add-to-cart">Add to Order</button>
-                <a href='product_detail.php?product_id=<?= htmlspecialchars($r['product_id']) ?>'
-                    class='btn btn-view-details'>View Detail</a>
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                    <button type="submit" name="add_to_cart" class="btn btn-success btn-add-to-cart">Add to
+                        Order</button>
+                    <a href='product_detail.php?product_id=<?= htmlspecialchars($r['product_id']) ?>'
+                        class='btn btn-view-details'>View Detail</a>
+                </div>
             </form>
         </div>
     </div>
@@ -65,23 +61,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['txtSearch'])) {
         }
         echo "</div>";
     } else {
-        echo "<h2 style='color:red; font-weight:bold; text-align:center; padding: 20px'>Opps! There are no results found for '$nameP'</h2>";
+        echo "<h2 style='color:red; font-weight:bold; text-align:center; padding: 20px'>Opps! There are no results found for '" . htmlspecialchars($nameP) . "'</h2>";
     }
     echo "</div>";
 }
 ?>
-
 <?php include_once 'footer.php'; ?>
-
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"></script>
-<script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- Include FontAwesome for search icon -->
-
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script>
-// JavaScript to hide/show "Add to Order" button based on login status
 document.addEventListener('DOMContentLoaded', function() {
     if (isLoggedIn === 'false') {
-        // Hide the "Add to Order" button if not logged in
         document.querySelectorAll('.btn-add-to-cart').forEach(function(button) {
             button.style.display = 'none';
         });
