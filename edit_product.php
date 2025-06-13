@@ -1,20 +1,39 @@
 <?php
 session_start();
-// Include the database connection file (your Connect class)
-include 'connect.php'; 
-
 if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: login.php');
     exit;
 }
-
-// Instantiate the Connect class and get the PDO connection
-$db = new Connect();
-$conn = $db->connectToPDO();
+require 'connect.php';
+$connect = new Connect();
+$db_link = $connect->connectToPDO(); // Use PDO consistently
 
 $error = "";
+$product = null; // Initialize product variable
 
-// Handle form submission for adding a new product
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    header('Location: manage_products.php');
+    exit;
+}
+$product_id = (int)$_GET['id'];
+
+// Fetch product details
+try {
+    $stmt = $db_link->prepare("SELECT * FROM product WHERE product_id = ?");
+    $stmt->execute([$product_id]);
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$product) {
+        // Product not found, redirect with an error message
+        $_SESSION['error_message'] = "Product not found.";
+        header('Location: manage_products.php');
+        exit;
+    }
+} catch (PDOException $e) {
+    $error = "Database error fetching product: " . $e->getMessage();
+}
+
+// Handle POST request for updating the product (logic remains the same as previously improved)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_name = trim($_POST['product_name'] ?? '');
     $product_type_id = filter_var($_POST['product_type_id'] ?? '', FILTER_VALIDATE_INT);
@@ -24,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantity = filter_var($_POST['quantity'] ?? '', FILTER_VALIDATE_INT);
     $product_video_url = trim($_POST['product_video_url'] ?? '');
 
-    $product_img = null; // Default to null for new product
+    $product_img = $product['product_img']; // Keep existing image if no new one uploaded
 
     // Validate inputs
     if (empty($product_name)) {
@@ -41,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid quantity.";
     }
 
-    // File Upload Handling
+    // File Upload Handling with enhanced security (logic remains the same)
     if (empty($error) && !empty($_FILES['product_img']['name'])) {
         $target_dir = "uploads/";
         $file_name = basename($_FILES["product_img"]["name"]);
@@ -60,58 +79,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
         }
         if (file_exists($target_file)) {
-            // Rename file to avoid collision (e.g., add uniqid)
+            // Rename file to avoid collision (e.g., add timestamp)
             $file_name = uniqid() . '_' . $file_name;
             $target_file = $target_dir . $file_name;
         }
 
         if (empty($error)) {
             if (move_uploaded_file($_FILES["product_img"]["tmp_name"], $target_file)) {
+                // Delete old image if it exists and is different from the new one
+                if (!empty($product['product_img']) && $product['product_img'] !== $file_name) {
+                    $old_img_path = 'uploads/' . $product['product_img'];
+                    if (file_exists($old_img_path)) {
+                        unlink($old_img_path);
+                    }
+                }
                 $product_img = $file_name;
             } else {
                 $error = "Error uploading image.";
             }
         }
-    } else if (empty($_FILES['product_img']['name'])) {
-        // You can add a check here if image is mandatory for new products
-        // For example: $error = "Product image is required.";
     }
 
-
-    // If no validation errors, proceed with insertion
+    // If no validation errors, proceed with update
     if (empty($error)) {
         try {
-            $sql = "INSERT INTO product (product_name, product_type_id, product_description, product_price, product_img, producer_id, quantity, product_video_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
+            $sql = "UPDATE product SET product_name=?, product_type_id=?, product_description=?, product_price=?, product_img=?, producer_id=?, quantity=?, product_video_url=? WHERE product_id=?";
+            $stmt = $db_link->prepare($sql);
             $stmt->execute([
                 $product_name,
                 $product_type_id,
                 $product_description,
                 $product_price,
-                $product_img, // Can be null if no image uploaded
+                $product_img,
                 $producer_id,
                 $quantity,
-                $product_video_url
+                $product_video_url,
+                $product_id
             ]);
 
             if ($stmt->rowCount() > 0) {
-                // Thêm thông báo thành công vào session
-                $_SESSION['success_message'] = "Product '" . htmlspecialchars($product_name) . "' added successfully!";
-                header("Location: manage_products.php"); // Redirect to product management page
+                // Set success message for manage_products.php
+                $_SESSION['success_message'] = "Product '" . htmlspecialchars($product_name) . "' updated successfully!";
+                header("Location: manage_products.php"); // Redirect after successful update
                 exit;
             } else {
-                $error = "Failed to add new product.";
+                $error = "No changes were made or update failed.";
             }
         } catch (PDOException $e) {
-            $error = "Database error during insertion: " . $e->getMessage();
+            $error = "Database error during update: " . $e->getMessage();
+        }
+    }
+    // Re-fetch product data after POST if there was an error, to show current form values
+    if (!empty($error)) {
+        try {
+            $stmt = $db_link->prepare("SELECT * FROM product WHERE product_id = ?");
+            $stmt->execute([$product_id]);
+            $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $error .= "<br>Error re-fetching product data after failed update: " . $e->getMessage();
         }
     }
 }
 
-// Fetch product types and producers for the dropdowns
+// Fetch product types and producers for the dropdowns (using PDO)
 $product_types = [];
 try {
-    $type_stmt = $conn->query("SELECT product_type_id, product_type_name FROM product_type");
+    $type_stmt = $db_link->query("SELECT product_type_id, product_type_name FROM product_type");
     $product_types = $type_stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $error .= "<br>Could not fetch product types: " . $e->getMessage();
@@ -119,22 +152,22 @@ try {
 
 $producers = [];
 try {
-    $prod_stmt = $conn->query("SELECT producer_id, producer_name FROM producer");
+    $prod_stmt = $db_link->query("SELECT producer_id, producer_name FROM producer");
     $producers = $prod_stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $error .= "<br>Could not fetch producers: " . $e->getMessage();
 }
 
-// Close the connection (or it will be closed automatically at script end)
-$conn = null;
+// Close the connection
+$db_link = null;
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Add New Product - TD Motor</title>
+    <title>Edit Product - TD Motor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="image/TDicon.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -186,9 +219,7 @@ $conn = null;
         }
     </style>
 </head>
-
 <body>
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
         <div class="d-flex align-items-center logo">
             <a href="admin.php" class="d-flex align-items-center text-decoration-none">
@@ -221,7 +252,7 @@ $conn = null;
             </aside>
 
             <main class="col-md-9 col-lg-10 p-4">
-                <h2 style="color: red; font-weight: bold;">Add New Product</h2> <?php if (!empty($error)): ?>
+                <h2 style="color: red; font-weight: bold;">Edit Product</h2> <?php if (!empty($error)): ?>
                     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                 <?php endif; ?>
                 <form method="post" enctype="multipart/form-data">
@@ -229,16 +260,15 @@ $conn = null;
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="product_name" class="form-label">Product Name <span class="text-danger">*</span></label>
-                                <input type="text" name="product_name" id="product_name" class="form-control" required value="<?= htmlspecialchars($_POST['product_name'] ?? '') ?>">
+                                <input type="text" name="product_name" id="product_name" class="form-control" required value="<?= htmlspecialchars($product['product_name'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="product_type_id" class="form-label">Product Type <span class="text-danger">*</span></label>
                                 <select name="product_type_id" id="product_type_id" class="form-control" required>
-                                    <option value="">Select Product Type</option>
                                     <?php foreach ($product_types as $type): ?>
-                                        <?php $selected = (isset($_POST['product_type_id']) && $_POST['product_type_id'] == $type['product_type_id']) ? 'selected' : ''; ?>
+                                        <?php $selected = (($product['product_type_id'] ?? '') == $type['product_type_id']) ? 'selected' : ''; ?>
                                         <option value='<?= htmlspecialchars($type['product_type_id']) ?>' <?= $selected ?>><?= htmlspecialchars($type['product_type_name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -248,23 +278,22 @@ $conn = null;
 
                     <div class="mb-3">
                         <label for="product_description" class="form-label">Product Description <span class="text-danger">*</span></label>
-                        <textarea name="product_description" id="product_description" class="form-control" rows="5" required><?= htmlspecialchars($_POST['product_description'] ?? '') ?></textarea>
+                        <textarea name="product_description" id="product_description" class="form-control" rows="5" required><?= htmlspecialchars($product['product_description'] ?? '') ?></textarea>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="product_price" class="form-label">Product Price <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" name="product_price" id="product_price" class="form-control" required value="<?= htmlspecialchars($_POST['product_price'] ?? '') ?>">
+                                <input type="number" step="0.01" name="product_price" id="product_price" class="form-control" required value="<?= htmlspecialchars($product['product_price'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="producer_id" class="form-label">Producer <span class="text-danger">*</span></label>
                                 <select name="producer_id" id="producer_id" class="form-control" required>
-                                    <option value="">Select Producer</option>
                                     <?php foreach ($producers as $row): ?>
-                                        <?php $selected = (isset($_POST['producer_id']) && $_POST['producer_id'] == $row['producer_id']) ? 'selected' : ''; ?>
+                                        <?php $selected = (($product['producer_id'] ?? '') == $row['producer_id']) ? 'selected' : ''; ?>
                                         <option value='<?= htmlspecialchars($row['producer_id']) ?>' <?= $selected ?>><?= htmlspecialchars($row['producer_name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -274,55 +303,73 @@ $conn = null;
 
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
-                        <input type="number" name="quantity" id="quantity" class="form-control" required value="<?= htmlspecialchars($_POST['quantity'] ?? '') ?>">
+                        <input type="number" name="quantity" id="quantity" class="form-control" required value="<?= htmlspecialchars($product['quantity'] ?? '') ?>">
                     </div>
 
                     <div class="mb-3">
                         <label for="product_img" class="form-label">Product Image</label>
                         <input type="file" name="product_img" id="product_img" class="form-control" accept="image/*">
-                        <small class="text-muted">Max 5MB (JPG, JPEG, PNG, GIF).</small>
-                        <div id="image-preview" class="mt-2" style="display: none;">
-                            <img id="preview-image" src="#" alt="Image Preview" class="img-thumbnail" style="max-width: 200px; height: auto;">
-                            <p id="image-file-name" class="text-muted mt-1"></p>
+                        <?php 
+                            $current_img_path = 'uploads/' . ($product['product_img'] ?? '');
+                            $img_display_url = (file_exists($current_img_path) && !empty($product['product_img'])) ? $current_img_path : 'image/default-product.png';
+                        ?>
+                        <div class="mt-2">
+                            <img id="current-image-preview" src="<?= htmlspecialchars($img_display_url) ?>" alt="Product Image" class="img-thumbnail" style="max-width: 120px; height: auto;">
+                            <?php if (!empty($product['product_img'])): ?>
+                                <small id="current-image-text" class="text-muted ms-2">Current image: <?= htmlspecialchars($product['product_img']) ?>. Upload a new file to replace.</small>
+                            <?php else: ?>
+                                <small id="current-image-text" class="text-muted ms-2">No image uploaded yet. Upload a new file.</small>
+                            <?php endif; ?>
                         </div>
+                        <small class="text-muted">Max 5MB (JPG, JPEG, PNG, GIF).</small>
                     </div>
                     <div class="mb-3">
                         <label for="product_video_url" class="form-label">Product Video URL</label>
-                        <input type="url" name="product_video_url" id="product_video_url" class="form-control" value="<?= htmlspecialchars($_POST['product_video_url'] ?? '') ?>">
-                        <small class="text-muted">Optional: URL to a product video (e.g., YouTube).</small>
+                        <input type="url" name="product_video_url" id="product_video_url" class="form-control" value="<?= htmlspecialchars($product['product_video_url'] ?? '') ?>">
+                        <?php if (!empty($product['product_video_url'])): ?>
+                            <small class="text-muted mt-1 d-block">Current URL: <a href="<?= htmlspecialchars($product['product_video_url']) ?>" target="_blank"><?= htmlspecialchars($product['product_video_url']) ?></a></small>
+                        <?php else: ?>
+                            <small class="text-muted mt-1 d-block">Optional: URL to a product video (e.g., YouTube).</small>
+                        <?php endif; ?>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Product</button>
+                    <button type="submit" class="btn btn-primary">Update Product</button>
                     <a href="manage_products.php" class="btn btn-secondary">Cancel</a>
                 </form>
             </main>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // JavaScript for image preview
+        // JavaScript for new image preview when a file is selected
         document.getElementById('product_img').addEventListener('change', function(event) {
-            const previewContainer = document.getElementById('image-preview');
-            const previewImage = document.getElementById('preview-image');
-            const imageFileName = document.getElementById('image-file-name');
-            
+            const currentImagePreview = document.getElementById('current-image-preview');
+            const currentImageText = document.getElementById('current-image-text');
             const file = event.target.files[0];
 
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    imageFileName.textContent = file.name;
-                    previewContainer.style.display = 'block';
+                    currentImagePreview.src = e.target.result; // Update src to new image
+                    currentImageText.textContent = 'New image selected: ' + file.name;
                 }
                 reader.readAsDataURL(file);
             } else {
-                previewImage.src = '#';
-                imageFileName.textContent = '';
-                previewContainer.style.display = 'none';
+                // If no new file selected, revert to original image or default
+                <?php
+                // Reconstruct the logic for the original image or default
+                $original_img_path = 'uploads/' . ($product['product_img'] ?? '');
+                $original_img_url = (file_exists($original_img_path) && !empty($product['product_img'])) ? $original_img_path : 'image/default-product.png';
+                ?>
+                currentImagePreview.src = '<?= htmlspecialchars($original_img_url) ?>';
+                currentImageText.textContent = <?php
+                    if (!empty($product['product_img'])) {
+                        echo "'" . htmlspecialchars($product['product_img']) . ". Upload a new file to replace.'";
+                    } else {
+                        echo "'No image uploaded yet. Upload a new file.'";
+                    }
+                ?>;
             }
         });
     </script>
 </body>
-
 </html>

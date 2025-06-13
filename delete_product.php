@@ -1,68 +1,57 @@
 <?php
-include_once 'connect.php';
-$conn = new Connect();
-$db_link = $conn->connectToMySQL();
-?>
+session_start();
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Manage Products</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script>
-        function confirmDelete(productId) {
-            if (confirm("Are you sure you want to delete this product?")) {
-                window.location.href = "delete_product.php?delete=" + productId;
-            }
+// Kiểm tra quyền admin
+if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
+    header('Location: login.php');
+    exit;
+}
+
+require 'connect.php'; // Đảm bảo đường dẫn đúng đến file connect.php
+
+$db = new Connect();
+$conn = $db->connectToPDO(); // Sử dụng phương thức connectToPDO()
+
+if (isset($_GET['delete'])) {
+    $product_id = filter_var($_GET['delete'], FILTER_VALIDATE_INT);
+
+    if ($product_id === false || $product_id <= 0) {
+        $_SESSION['error_message'] = "Invalid product ID provided.";
+        header('Location: manage_products.php');
+        exit;
+    }
+
+    try {
+        // Optional: Delete product image file from server first
+        // Get image name before deleting product record
+        $stmt_img = $conn->prepare("SELECT product_img FROM product WHERE product_id = ?");
+        $stmt_img->execute([$product_id]);
+        $product_img = $stmt_img->fetchColumn();
+
+        if ($product_img && file_exists('uploads/' . $product_img)) {
+            unlink('uploads/' . $product_img); // Delete the actual file
         }
-    </script>
-</head>
-<body>
-    <div class="container">
-        <?php
-        if (isset($_GET['delete'])) {
-            $product_id = $_GET['delete'];
-            $sql = "DELETE FROM product WHERE product_id = ?";
-            $stmt = $db_link->prepare($sql);
-            $stmt->bind_param("i", $product_id);
-            $stmt->execute();
 
-            if ($stmt->affected_rows > 0) {
-                echo "<div class='alert alert-success'>Product deleted successfully!</div>";
-                header("Location: manage_products.php"); // Redirect back to manage_product page
-                exit;
-            } else {
-                echo "<div class='alert alert-danger'>Error: You need to delete order before delete product or product not found.</div>";
-            }
+        // Delete the product record
+        $stmt = $conn->prepare("DELETE FROM product WHERE product_id = ?");
+        $stmt->execute([$product_id]);
+
+        if ($stmt->rowCount() > 0) {
+            $_SESSION['success_message'] = "Product deleted successfully!";
         } else {
-            // Display all products
-            $sql = "SELECT * FROM product";
-            $result = $db_link->query($sql);
-
-            if ($result->num_rows > 0) {
-                echo "<h3>All Products:</h3>";
-                echo "<table class='table table-striped'>";
-                echo "<tr><th>Product Name</th><th>Product Type ID</th><th>Product Price</th><th>Product Image</th><th>Quantity</th><th>Action</th></tr>";
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>" . $row['product_name'] . "</td>";
-                    echo "<td>" . $row['product_type_id'] . "</td>";
-                    echo "<td>" . $row['product_price'] . "</td>";
-                    echo "<td><img src='uploads/" . $row['product_img'] . "' alt='Product Image' style='width:100px; height:auto;'></td>";
-                    echo "<td>" . $row['quantity'] . "</td>";
-                    echo "<td>
-                            <a href='add_product.php?edit=" . $row['product_id'] . "' class='btn btn-primary'>Edit</a>
-                            <a href='javascript:void(0);' onclick='confirmDelete(" . $row['product_id'] . ")' class='btn btn-danger'>Delete</a>
-                          </td>";
-                    echo "</tr>";
-                }
-                echo "</table>";
-            } else {
-                echo "No products found";
-            }
+            $_SESSION['error_message'] = "Product not found or could not be deleted.";
         }
-        ?>
-    </div>
-</body>
-</html>
+    } catch (PDOException $e) {
+        $_SESSION['error_message'] = "Database error: " . $e->getMessage();
+    }
+} else {
+    $_SESSION['error_message'] = "No product ID specified for deletion.";
+}
+
+// Đóng kết nối
+$conn = null;
+
+// Chuyển hướng về trang quản lý sản phẩm
+header('Location: manage_products.php');
+exit;
+?>

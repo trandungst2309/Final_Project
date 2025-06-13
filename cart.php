@@ -45,7 +45,7 @@ if (isset($_POST['add_to_cart'])) {
 
             if ($cart_count > 0) {
                 // If there is already an item in the cart, notify the user
-                $_SESSION['message'] = "You can only add one duplicate product to your cart!";
+                $_SESSION['message'] = "Sorry! You can only add one product at a time to your cart!";
             } else {
                 // Add product to cart
                 $query = "INSERT INTO cart (customer_id, product_id, product_name, product_price, product_img, date, count) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -307,7 +307,8 @@ $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <br>
         <?php endif; ?>
-        <a href="order_detail.php" class="btn btn-custom">History Orders</a>
+        <!-- <a href="order_detail.php" class="btn btn-custom">History Orders</a> -->
+         <a href="homepage.php" class="btn btn-custom">Back</a>
     </div>
     <br><br>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>

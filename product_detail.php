@@ -276,6 +276,10 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
         /* Separator */
     }
 
+    .product-video-section {
+        max-width: 80%;
+        /* Ensure video section is responsive */
+    }
     .embed-responsive {
         position: relative;
         display: block;
@@ -478,6 +482,7 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="product-video-section" id="product-video-content">
             <h2>Cinematic video</h2>
+            <br>
             <?php if (!empty($product_video_url)) { ?>
             <div class="embed-responsive embed-responsive-16by9">
                 <iframe src="<?= htmlspecialchars($product_video_url) ?>" frameborder="0"

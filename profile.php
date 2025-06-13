@@ -170,6 +170,10 @@ if (isset($_GET['product_id'])) {
                         <button type="button" class="btn_edit" onclick="window.location.href='update_profile.php'">Edit
                             Profile</button>
 
+                        <!-- History Button -->
+                        <button type="button" class="btn_edit" onclick="window.location.href='order_detail.php'">Order
+                            History</button>
+                        </button>
                     </div>
                 </div>
             </div>

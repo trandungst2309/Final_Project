@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['txtSearch'])) {
 
     echo "<div class='container'>";
     if (count($results) > 0) {
-        echo "<h2 style='font-weight:bold'>Results for " . htmlspecialchars($nameP) . "</h2>";
+        echo "<h2 style='font-weight:bold'>Results for <span style='color: red'> " . htmlspecialchars($nameP) . "</span></h2>";
         echo "<div class='row justify-content-center'>";
         foreach ($results as $r) {
 ?>

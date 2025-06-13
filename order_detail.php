@@ -174,7 +174,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="container" style="margin-top: 150px;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Orders History</h2>
-            <a href="cart.php" class="btn-primary">Back to Cart</a>
+            <a href="profile.php" class="btn-primary">Back</a>
         </div>
 
         <?php

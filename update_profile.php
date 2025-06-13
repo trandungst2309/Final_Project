@@ -105,25 +105,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2 class="mb-4" style="color: red; font-weight:bold">Update Profile</h2>
 
                 <?php if (!empty($errors)): ?>
-                    <div class="alert alert-danger">
-                        <ul>
-                            <?php foreach ($errors as $e): ?>
-                                <li><?= htmlspecialchars($e) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
+                <div class="alert alert-danger">
+                    <ul>
+                        <?php foreach ($errors as $e): ?>
+                        <li><?= htmlspecialchars($e) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
                 <?php endif; ?>
 
                 <form action="update_profile.php" method="POST" enctype="multipart/form-data" novalidate>
                     <div class="mb-3 text-center">
-                        <img id="preview-image"
-                            src="<?= !empty($customer['profile_image']) ? './uploads/' . htmlspecialchars($customer['profile_image']) : './uploads/avatars/default-avatar.png' ?>"
-                            alt="Profile Image"
-                            width="120"
-                            height="120"
-                            style="border-radius: 50%; border: 2px solid #dc3545;">
+                        <img id="preview-image" src="<?= !empty($customer['profile_image']) && file_exists('./uploads/' . $customer['profile_image']) 
+                            ? './uploads/' . htmlspecialchars($customer['profile_image']) 
+                            : './uploads/default.png' ?>" alt="Profile Image"
+                            class="rounded-circle border border-danger border-3 object-fit-cover"
+                            style="width: 120px; height: 120px; object-fit: cover;">
                     </div>
-
+                    
                     <div class="mb-3">
                         <label for="customer_name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="customer_name" name="customer_name" required
@@ -146,7 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="mb-3">
                         <label for="profile_image" class="form-label">Profile Image</label>
-                        <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
+                        <input type="file" class="form-control" id="profile_image" name="profile_image"
+                            accept="image/*">
                     </div>
 
                     <button type="submit" class="btn btn-danger">Save Changes</button>
@@ -157,15 +157,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        const fileInput = document.getElementById('profile_image');
-        const previewImage = document.getElementById('preview-image');
+    const fileInput = document.getElementById('profile_image');
+    const previewImage = document.getElementById('preview-image');
 
-        fileInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                previewImage.src = URL.createObjectURL(file);
-            }
-        });
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            previewImage.src = URL.createObjectURL(file);
+        }
+    });
     </script>
 </body>
 
