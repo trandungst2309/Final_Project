@@ -140,7 +140,6 @@ $conn = null;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* CSS được điều chỉnh để đồng bộ với manage_products.php (giao diện gốc) */
         body {
             min-height: 100vh;
             display: flex;
@@ -221,7 +220,7 @@ $conn = null;
             </aside>
 
             <main class="col-md-9 col-lg-10 p-4">
-                <h2 style="color: red; font-weight: bold;">Add New Product</h2> <?php if (!empty($error)): ?>
+                <h2 style="color: red; font-weight: bold; text-align:center">Add New Product</h2> <?php if (!empty($error)): ?>
                     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                 <?php endif; ?>
                 <form method="post" enctype="multipart/form-data">

@@ -252,7 +252,7 @@ $db_link = null;
             </aside>
 
             <main class="col-md-9 col-lg-10 p-4">
-                <h2 style="color: red; font-weight: bold;">Edit Product</h2> <?php if (!empty($error)): ?>
+                <h2 style="color: red; font-weight: bold;text-align:center">Edit Product</h2> <?php if (!empty($error)): ?>
                     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                 <?php endif; ?>
                 <form method="post" enctype="multipart/form-data">

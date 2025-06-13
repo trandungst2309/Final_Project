@@ -16,15 +16,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['txtSearch'])) {
     $conn = new Connect();
     $db_link = $conn->connectToPDO();
 
-    $sql = "SELECT * FROM product WHERE product_name LIKE ?";
+    if (is_numeric($nameP)) {
+    $price = floatval($nameP);
+    $lower = floor($price / 10000) * 10000;
+    $upper = $lower + 10000;
+    $sql = "SELECT * FROM product WHERE product_price BETWEEN ? AND ?";
     $stmt = $db_link->prepare($sql);
-    $n = "%$nameP%";
-    $stmt->execute([$n]);
+    $stmt->execute([$lower, $upper]);
+    } else {
+        $sql = "SELECT * FROM product WHERE product_name LIKE ?";
+        $stmt = $db_link->prepare($sql);
+        $n = "%$nameP%";
+        $stmt->execute([$n]);
+    }
+
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo "<div class='container'>";
     if (count($results) > 0) {
-        echo "<h2 style='font-weight:bold'>Results for <span style='color: red'> " . htmlspecialchars($nameP) . "</span></h2>";
+       echo "<h2 style='font-weight:bold'>Results for <span style='color: red'>" . 
+        (is_numeric($nameP) ? '$' . number_format($lower) . " - $" . number_format($upper) : htmlspecialchars($nameP)) . 
+        "</span></h2>";
         echo "<div class='row justify-content-center'>";
         foreach ($results as $r) {
 ?>
