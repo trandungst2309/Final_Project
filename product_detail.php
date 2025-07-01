@@ -63,7 +63,7 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/ajax/libs/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="css/detail.css">
     <link rel="icon" href="image/TDicon.png" type="image/x-icon">
@@ -81,10 +81,11 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
     }
 
     .alert-info {
-        background-color:#bce8f1;
+        background-color:darkgrey;
         color: #f40000;
         border-color: #bce8f1;
         text-align: center;
+        border-radius: 10px;
     }
 
     /* New/Modified styles to match the reference image */
@@ -454,17 +455,20 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
                     </span></div>
                 <div class="product-price"><?= number_format($product['product_price']) ?>$</div>
 
-                <?php if (isset($_SESSION['customer_id'])) : ?>
-                <form method="POST" action="cart.php" style="display:inline;">
-                    <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['product_id']) ?>">
-                    <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']) ?>">
-                    <input type="hidden" name="product_price"
-                        value="<?= htmlspecialchars($product['product_price']) ?>">
-                    <input type="hidden" name="product_img" value="<?= htmlspecialchars($product['product_img']) ?>">
-                    <button type="submit" name="add_to_cart" class="btn-add-to-order-custom">Add to Order</button>
-                </form>
+                <?php
+                // Kiểm tra xem người dùng đã đăng nhập và có role là "customer" hay không
+                if (isset($_SESSION['customer_id']) && $_SESSION['role'] === 'customer') :
+                ?>
+                    <form method="POST" action="cart.php" style="display:inline;">
+                        <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['product_id']) ?>">
+                        <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']) ?>">
+                        <input type="hidden" name="product_price"
+                            value="<?= htmlspecialchars($product['product_price']) ?>">
+                        <input type="hidden" name="product_img" value="<?= htmlspecialchars($product['product_img']) ?>">
+                        <button type="submit" name="add_to_cart" class="btn-add-to-order-custom">Add to Order</button>
+                    </form>
                 <?php else : ?>
-                <p class="alert-info">Please <a href="login.php">login</a> to add this product to your cart.</p>
+                    <p class="alert-info">Please <a href="login.php">login</a> with a customer account to add this product to your cart!</p>
                 <?php endif; ?>
 
                 <div class="btn-action-group">

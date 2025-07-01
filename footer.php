@@ -45,7 +45,7 @@
 	                        <li><a href="homepage.php"><i class="fa-solid fa-angles-right"></i> Home</a></li>
 	                        <li><a href="gallery.php"><i class="fa-solid fa-angles-right"></i> Gallery</a></li>
 	                        <li><a href="about.php"><i class="fa-solid fa-angles-right"></i> About us</a></li>
-	                        <li><a href="contact.php"><i class="fa-solid fa-angles-right"></i> Contact us</a></li>
+	                        <li><a href="preorder.php"><i class="fa-solid fa-angles-right"></i> Pre-Order New Product</a></li>
 	                    </div>
 	                    <br>
 	                    <h2 style="color: whitesmoke;">Chat with us</h2>

@@ -6,11 +6,7 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
 }
 require 'connect.php';
 $connect = new Connect();
-$conn = $connect->connectToMySQL();
-
-
-$sql = "SELECT * FROM product";
-$result = mysqli_query($conn, $sql);
+$conn = $connect->connectToPDO();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,26 +20,27 @@ $result = mysqli_query($conn, $sql);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
     body {
-        min-height: 100vh; /* Đảm bảo body đủ cao để chứa nội dung */
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
     }
+
     .navbar {
-        flex-shrink: 0; /* Đảm bảo navbar không co lại */
+        flex-shrink: 0;
     }
+
     .container-fluid {
-        flex-grow: 1; /* Đảm bảo container-fluid chiếm hết không gian còn lại */
+        flex-grow: 1;
         display: flex;
-        flex-direction: column; /* Đặt flex-direction cho container-fluid */
+        flex-direction: column;
     }
+
     .row {
-        flex-grow: 1; /* Đảm bảo hàng chiếm hết không gian còn lại */
+        flex-grow: 1;
     }
 
     .sidebar {
-        height: 100%; /* Đặt chiều cao 100% của phần tử cha (row) */
         background-color: #343a40;
-        /* Optional: overflow-y: auto; nếu nội dung sidebar có thể dài hơn màn hình */
     }
 
     .sidebar a {
@@ -61,8 +58,9 @@ $result = mysqli_query($conn, $sql);
         height: 60px;
     }
 
-    .action-buttons a {
-        margin-right: 8px;
+    main {
+        flex-grow: 1;
+        overflow-y: auto;
     }
 
     .logo-img {
@@ -70,16 +68,10 @@ $result = mysqli_query($conn, $sql);
         display: block;
         margin: 20px auto;
     }
-    /* Đảm bảo main content chiếm hết chiều cao còn lại và có thể cuộn */
-    main {
-        flex-grow: 1;
-        overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
-    }
     </style>
 </head>
 
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
         <div class="d-flex align-items-center logo">
             <a href="admin.php" class="d-flex align-items-center text-decoration-none">
@@ -90,17 +82,53 @@ $result = mysqli_query($conn, $sql);
         </div>
         <div class="ms-auto d-flex align-items-center">
             <span class="text-white me-3">
-                <?php echo htmlspecialchars($_SESSION['customer_name'] ?? 'Admin'); ?>
+                <?= htmlspecialchars($_SESSION['customer_name'] ?? 'Admin'); ?>
             </span>
             <a href="logout.php" class="btn btn-outline-light btn-sm">Logout</a>
         </div>
     </nav>
 
-    <!-- Layout -->
+    <?php if (isset($_SESSION['role_update_message'])): ?>
+    <div id="role-alert"
+        class="alert alert-info alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-4"
+        style="z-index: 1050; min-width: 300px;" role="alert">
+        <?= htmlspecialchars($_SESSION['role_update_message']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <script>
+    setTimeout(() => {
+        const alertBox = document.getElementById('role-alert');
+        if (alertBox) {
+            alertBox.classList.remove('show');
+            alertBox.classList.add('fade');
+        }
+    }, 3000);
+    </script>
+    <?php unset($_SESSION['role_update_message']); ?>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['delete_message'])): ?>
+    <div id="delete-alert"
+        class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5"
+        style="z-index: 1050; min-width: 300px;" role="alert">
+        <?= htmlspecialchars($_SESSION['delete_message']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <script>
+    setTimeout(() => {
+        const deleteAlert = document.getElementById('delete-alert');
+        if (deleteAlert) {
+            deleteAlert.classList.remove('show');
+            deleteAlert.classList.add('fade');
+        }
+    }, 3000);
+    </script>
+    <?php unset($_SESSION['delete_message']); ?>
+    <?php endif; ?>
+
+
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <aside class="col-md-3 col-lg-2 sidebar p-0" style="height:auto">
+            <aside class="col-md-3 col-lg-2 sidebar p-0">
                 <div class="p-3 text-white fw-bold border-bottom"><a href="admin.php">Dashboard</a></div>
                 <a href="manage_products.php"><i class="bi bi-box"></i> Product Management</a>
                 <a href="manage_product_type.php"><i class="bi bi-tags"></i> Product Type Management</a>
@@ -110,114 +138,79 @@ $result = mysqli_query($conn, $sql);
                 <a href="statistic.php"><i class="bi bi-bar-chart"></i> Statistics</a>
                 <a href="manage_contact.php"><i class="bi bi-headset"></i> Contact Management</a>
                 <a href="manage_feedback.php"><i class="bi bi-chat-dots"></i> Feedback Management</a>
+                <a href="manage_preorder.php"><i class="bi bi-calendar-check"></i> Pre-order Management</a>
                 <hr class="text-white">
                 <a href="homepage.php"><i class="bi bi-house-door"></i> Back to TD Website</a>
             </aside>
 
-            <!-- Content -->
             <main class="col-md-9 col-lg-10 p-4">
-                <div class="pcoded-inner-content">
-                    <!-- Account Management Page Content Start -->
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header" style="color: red; font-weight: bold;">
-                                <h2>Account Management</h2>
-                            </div>
-                            <div class="card-block">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Name</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>Address</th>
-                                                <th>Role</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                                    // Connect to the database
-                                                    $conn = new mysqli("localhost", "root", "", "motorbike");
-                                                    if ($conn->connect_error) {
-                                                        die("Connection failed: " . $conn->connect_error);
-                                                    }
+                <h2 style="color: red; font-weight: bold;">Account Management</h2>
+                    <a href="add_producer.php" class="btn btn-info mb-3">Add Producer</a>
+                    <a href="admin.php" class="btn btn-success mb-3">Back to Dashboard</a>
+                <div class="card">
+                    <!-- <div class="card-header text-danger fw-bold">
+                        <h2>Account Management</h2>
+                    </div> -->
+                    
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                            try {
+                                $stmt = $conn->prepare("SELECT * FROM customer");
+                                $stmt->execute();
+                                $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                                    // Delete customer account
-                                                    if (isset($_POST["delete_id"])) {
-                                                        $customer_id = intval($_POST["delete_id"]);
-                                                        $delete_sql = "DELETE FROM customer WHERE customer_id = ?";
-                                                        $delete_stmt = $conn->prepare($delete_sql);
-                                                        if ($delete_stmt) {
-                                                            if ($delete_stmt->execute([$customer_id])) {
-                                                                echo "<script>alert('Account deleted successfully!'); window.location.href='manage_account.php';</script>";
-                                                            } else {
-                                                                echo "Error: " . htmlspecialchars($delete_stmt->error);
-                                                            }
-                                                        } else {
-                                                            echo "Error preparing statement: " . htmlspecialchars($conn->error);
-                                                        }
-                                                    }
+                                if ($customers) {
+                                    foreach ($customers as $row) {
+                                        echo "<tr>";
+                                        echo "<td>{$row['customer_id']}</td>";
+                                        echo "<td>{$row['customer_name']}</td>";
+                                        echo "<td>{$row['email']}</td>";
+                                        echo "<td>{$row['phone']}</td>";
+                                        echo "<td>{$row['address']}</td>";
+                                        echo "<td>
+                                                <form action='update_role.php' method='post'>
+                                                    <input type='hidden' name='customer_id' value='{$row['customer_id']}'>
+                                                    <select name='role' class='form-select form-select-sm' onchange='this.form.submit()'>
+                                                        <option value='customer' " . ($row['role'] === 'customer' ? 'selected' : '') . ">Customer</option>
+                                                        <option value='admin' " . ($row['role'] === 'admin' ? 'selected' : '') . ">Admin</option>
+                                                    </select>
+                                                </form>
+                                            </td>";
 
-                                                    // Update role
-                                                    if (isset($_POST['customer_id']) && isset($_POST['role'])) {
-                                                        $customer_id = $_POST['customer_id'];
-                                                        $role = $_POST['role'];
-                                                        $update_sql = "UPDATE customer SET role = ? WHERE customer_id = ?";
-                                                        $update_stmt = $conn->prepare($update_sql);
-                                                        if ($update_stmt) {
-                                                            if ($update_stmt->execute([$role, $customer_id])) {
-                                                                echo "<script>alert('Role updated successfully!'); window.location.href='manage_account.php';</script>";
-                                                            } else {
-                                                                echo "Error: " . htmlspecialchars($update_stmt->error);
-                                                            }
-                                                        } else {
-                                                            echo "Error preparing statement: " . htmlspecialchars($conn->error);
-                                                        }
-                                                    }
-
-                                                    // Fetch and display customer data
-                                                    $sql = "SELECT * FROM customer";
-                                                    $result = $conn->query($sql);
-                                                    if ($result->num_rows > 0) {
-                                                        while ($row = $result->fetch_assoc()) {
-                                                            echo "<tr>";
-                                                            echo "<td>" . $row['customer_id'] . "</td>";
-                                                            echo "<td>" . $row['customer_name'] . "</td>";
-                                                            echo "<td>" . $row['email'] . "</td>";
-                                                            echo "<td>" . $row['phone'] . "</td>";
-                                                            echo "<td>" . $row['address'] . "</td>";
-                                                            echo "<td>";
-                                                            echo "<form action='update_role.php' method='post' onsubmit='return confirmRoleChange();'>";
-                                                            echo "<input type='hidden' name='customer_id' value='" . $row['customer_id'] . "'>";
-                                                            echo "<select name='role' class='role-select' onchange='this.form.submit()'>";
-                                                            echo "<option value='customer'" . ($row['role'] == 'customer' ? ' selected' : '') . ">Customer</option>";
-                                                            echo "<option value='admin'" . ($row['role'] == 'admin' ? ' selected' : '') . ">Admin</option>";
-                                                            echo "</select>";
-                                                            echo "</form>";
-                                                            echo "</td>";
-                                                            echo "<td>
-                                                                        <form action='delete_account.php'  method='post' style='display:inline-block; '''>
-                                                                            <input type='hidden' name='delete_id' value='" . $row['customer_id'] . "'>
-                                                                            <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
-                                                                        </form>
-                                                                    </td>";
-                                                            echo "</tr>";
-                                                        }
-                                                    } else {
-                                                        echo "<tr><td colspan='7'>No records found.</td></tr>";
-                                                    }
-                                                    $conn->close();
-                                                    ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                                        echo "<td>
+                                                <form action='delete_account.php' method='post' style='display:inline-block;'>
+                                                    <input type='hidden' name='delete_id' value='{$row['customer_id']}'>
+                                                    <button type='submit' class='btn btn-danger btn-sm'>Delete</button>
+                                                </form>
+                                              </td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='7'>No records found.</td></tr>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "<tr><td colspan='7'>Error: " . htmlspecialchars($e->getMessage()) . "</td></tr>";
+                            }
+                            ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <!-- Account Management Page Content End -->
+                </div>
             </main>
         </div>
     </div>

@@ -12,7 +12,7 @@ class Connect{
         $this->server ='localhost';
         $this->user ='root';
         $this->password =''; 
-        $this->dbName ='motorbike';
+        $this->dbName ='tdmotor';
         $this->port = 3306; 
     }
 

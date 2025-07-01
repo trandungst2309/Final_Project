@@ -57,6 +57,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         cursor: pointer;
         font-size: 2rem;
         text-decoration: none;
+        font-weight: bold;
     }
 
     .button:hover {
@@ -140,7 +141,7 @@ body h3 {
     align-items: center;
     min-height: 100vh;
     background: url(/image/hondacbr.jpg) no-repeat;
-    /*Thay đổi hình nền header*/
+    /*Thay đổi hình nền head*/
     background-size: cover;
     background-position: center;
 }

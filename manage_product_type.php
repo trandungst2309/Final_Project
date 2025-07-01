@@ -110,6 +110,7 @@ $result = mysqli_query($conn, $sql);
                 <a href="statistic.php"><i class="bi bi-bar-chart"></i> Statistics</a>
                 <a href="manage_contact.php"><i class="bi bi-headset"></i> Contact Management</a>
                 <a href="manage_feedback.php"><i class="bi bi-chat-dots"></i> Feedback Management</a>
+                <a href="manage_preorder.php"><i class="bi bi-calendar-check"></i> Pre-order Management</a>
                 <hr class="text-white">
                 <a href="homepage.php"><i class="bi bi-house-door"></i> Back to TD Website</a>
             </aside>
@@ -118,7 +119,7 @@ $result = mysqli_query($conn, $sql);
             <main class="col-md-9 col-lg-10 p-4">
                 <h2 style="color: red; font-weight: bold;">Product Type Management</h2>
                 <a href="add_product_type.php" class="btn btn-info mb-3">Add Product Type</a>
-                <a href="admin.php" class="btn btn-success mb-3">Back to Homepage</a>
+                <a href="admin.php" class="btn btn-success mb-3">Back to Dashboard</a>
 
                 <?php
                 if ($result && mysqli_num_rows($result) > 0) {

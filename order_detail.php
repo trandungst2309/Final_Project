@@ -119,14 +119,14 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     .btn-primary:hover {
-        background-color:cyan;
+        background-color: cyan;
         border-color: cyan;
         color: black;
         text-decoration: none;
         transition: background-color 0.3s ease;
     }
 
-    .btn-cancel{
+    .btn-cancel {
         /* display: inline-block;
         text-decoration: none; */
         background-color: #dc3545;
@@ -145,20 +145,20 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         transition: background-color 0.3s ease;
     }
 
-    h2{
+    h2 {
         font-size: 30px;
         font-weight: bold;
         color: red;
     }
 
     .alert-warning {
-        background-color:lightblue;
+        background-color: lightblue;
         text-align: center;
         padding: 50px 0;
         color: #333;
         font-weight: bold;
         font-size: 2rem;
-        /* Increased font size for the message */   
+        /* Increased font size for the message */
     }
 
     table {
@@ -263,7 +263,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <?php endif; ?>
     </div>
-
+    <?php include 'footer.php'; ?>
     <script>
     function showFeedbackForm(orderId) {
         var feedbackForm = document.getElementById('feedback-form-' + orderId);

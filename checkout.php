@@ -1,10 +1,7 @@
-<link rel="icon" href="image/TDicon.png" type="image/x-icon">
-
 <?php
 session_start();
 include 'connect.php';
 
-// Đảm bảo khách hàng đã đăng nhập
 if (!isset($_SESSION['customer_id']) || !isset($_GET['product_id'])) {
     header('Location: homepage.php');
     exit();
@@ -13,7 +10,6 @@ if (!isset($_SESSION['customer_id']) || !isset($_GET['product_id'])) {
 $customer_id = $_SESSION['customer_id'];
 $product_id = $_GET['product_id'];
 
-// Khởi tạo kết nối
 $conn = new Connect();
 $db_link = $conn->connectToPDO();
 
@@ -43,8 +39,8 @@ $_SESSION['address'] = $customer['address'];
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
+    <link rel="icon" href="image/TDicon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
     body {
@@ -57,28 +53,6 @@ $_SESSION['address'] = $customer['address'];
         margin-bottom: 20px;
     }
 
-    .btn-primary-custom {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: #fff;
-    }
-
-    .btn-primary-custom:hover {
-        background-color: #0056b3;
-        border-color: #004085;
-    }
-
-    .btn-secondary-custom {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        color: #fff;
-    }
-
-    .btn-secondary-custom:hover {
-        background-color: #5a6268;
-        border-color: #4e555b;
-    }
-
     .product-details {
         margin-bottom: 20px;
     }
@@ -87,25 +61,6 @@ $_SESSION['address'] = $customer['address'];
         border: 2px solid #007bff;
     }
 
-    .form-control {
-        border-radius: 0.25rem;
-        border: 2px solid #ced4da;
-    }
-
-    .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
-    }
-
-    .form-group label {
-        font-weight: bold;
-    }
-
-    /* Hide credit card form by default */
-    #creditCardForm {
-        display: none;
-    }
-    
     .container {
         max-width: 800px;
         margin-top: 100px;
@@ -131,7 +86,7 @@ $_SESSION['address'] = $customer['address'];
         margin-left: 10px;
         display: inline-block;
         text-decoration: none;
-        background-color:forestgreen;
+        background-color: forestgreen;
         border-color: forestgreen;
         color: #ffffff;
         border-radius: 25px;
@@ -141,15 +96,13 @@ $_SESSION['address'] = $customer['address'];
     }
 
     .btn-checkout:hover {
-        background-color:gold;
+        background-color: gold;
         border-color: gold;
         color: black;
-        transition: background-color 0.3s ease;
     }
 
     .btn-back {
         margin-left: 10px;
-        display: inline-block;
         text-decoration: none;
         background-color: #007bff;
         border-color: #007bff;
@@ -161,11 +114,14 @@ $_SESSION['address'] = $customer['address'];
     }
 
     .btn-back:hover {
-        background-color:cyan;
+        background-color: cyan;
         border-color: cyan;
         color: black;
         text-decoration: none;
-        transition: background-color 0.3s ease;
+    }
+
+    #creditCardForm {
+        display: none;
     }
     </style>
 </head>
@@ -181,12 +137,16 @@ $_SESSION['address'] = $customer['address'];
         <div class="row">
             <div class="col-md-6">
                 <h4 class="mb-4">Product Details</h4>
-                <div class="product-details card">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= htmlspecialchars($_SESSION['product_name']) ?></h5>
-                        <p class="card-text">Price: $<?= number_format($_SESSION['product_price']) ?></p>
-                    </div>
+                <div class="product-details card text-center p-3">
+                    <img src="uploads/<?= htmlspecialchars($product['product_img']) ?>"
+                        alt="<?= htmlspecialchars($product['product_name']) ?>" class="img-fluid rounded mb-3"
+                        style="max-height: 300px; object-fit: contain;">
+                    <h5 class="card-title"><?= htmlspecialchars($_SESSION['product_name']) ?></h5>
+                    <p class="card-text text-primary font-weight-bold" style="font-size: 1.25rem;">
+                        Price: $<?= number_format($_SESSION['product_price']) ?>
+                    </p>
                 </div>
+
             </div>
 
             <div class="col-md-6">
@@ -212,6 +172,7 @@ $_SESSION['address'] = $customer['address'];
                         <input type="text" id="phone" name="phone" class="form-control"
                             value="<?= htmlspecialchars($_SESSION['phone']) ?>" required>
                     </div>
+
                     <div class="form-group">
                         <label>Payment Method</label>
                         <div class="form-check">
@@ -248,7 +209,8 @@ $_SESSION['address'] = $customer['address'];
                     <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']) ?>">
                     <input type="hidden" name="product_price"
                         value="<?= htmlspecialchars($product['product_price']) ?>">
-                    <button type="submit" class="btn-checkout">Continue to Checkout</button>
+
+                    <button type="submit" class="btn-checkout">Checkout</button>
                     <a href="cart.php" class="btn-back">Back to Cart</a>
                 </form>
             </div>
@@ -256,21 +218,20 @@ $_SESSION['address'] = $customer['address'];
     </div>
 
     <script>
-    // Toggle the visibility of the credit card form and manage the 'required' attributes
     function toggleCreditCardForm() {
         var ccForm = document.getElementById('creditCardForm');
         var ccRadio = document.getElementById('cc');
         var cardFields = document.querySelectorAll('#creditCardForm input');
 
         if (ccRadio.checked) {
-            ccForm.style.display = 'block'; // Show the credit card form
+            ccForm.style.display = 'block';
             cardFields.forEach(function(field) {
-                field.setAttribute('required', true); // Make credit card fields required
+                field.setAttribute('required', true);
             });
         } else {
-            ccForm.style.display = 'none'; // Hide the credit card form
+            ccForm.style.display = 'none';
             cardFields.forEach(function(field) {
-                field.removeAttribute('required'); // Remove 'required' from credit card fields
+                field.removeAttribute('required');
             });
         }
     }

@@ -1,10 +1,5 @@
 <?php
 session_start();
-// Khởi tạo session để sử dụng $_SESSION['customer_name'] nếu chưa có
-// Bạn nên kiểm tra nếu session đã được bắt đầu ở đầu file hoặc ở một file chung (ví dụ: header.php)
-// if (session_status() == PHP_SESSION_NONE) {
-//     session_start();
-// }
 
 // Kiểm tra quyền truy cập admin
 if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
@@ -12,8 +7,6 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-// Giả định bạn có một file `connect.php` chứa class Connect và phương thức connectToPDO()
-// Nếu không, bạn cần tạo file này hoặc thay thế phần kết nối PDO trực tiếp tại đây.
 require 'connect.php'; // Đảm bảo đường dẫn đúng đến file connect.php
 $connect = new Connect();
 $db_link = $connect->connectToPDO(); // Kết nối sử dụng PDO
@@ -29,6 +22,10 @@ $totalQuantity = 0;
 $totalRevenue = 0;
 $totalOrders = 0;
 $filteredOrders = [];
+
+// Khởi tạo biến cho dữ liệu biểu đồ
+$revenue_data_for_chart = []; // Mảng chứa doanh thu theo ngày/tháng
+$labels_for_chart = [];       // Mảng chứa nhãn (ngày/tháng) cho biểu đồ
 
 // Xử lý khi có dữ liệu POST để lọc
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -96,6 +93,49 @@ try {
     $error .= "Error fetching total orders: " . $e->getMessage();
 }
 
+// --- TRUY VẤN DỮ LIỆU CHO BIỂU ĐỒ DOANH THU ---
+try {
+    // Lấy doanh thu theo ngày trong tháng được chọn
+    // Sử dụng DATE_FORMAT để nhóm theo ngày
+    $chartDataQuery = "
+        SELECT 
+            DATE_FORMAT(o.order_date, '%Y-%m-%d') AS order_day,
+            SUM(o.quantity * p.product_price) AS daily_revenue
+        FROM `order` o
+        JOIN `product` p ON o.product_id = p.product_id
+        " . $whereClause . "
+        GROUP BY order_day
+        ORDER BY order_day ASC
+    ";
+    
+    $stmt = $db_link->prepare($chartDataQuery);
+    $stmt->execute($params);
+    $chartRawData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Chuẩn bị dữ liệu cho biểu đồ
+    // Tạo mảng đầy đủ các ngày trong tháng để đảm bảo biểu đồ không bị "lỗ"
+    $num_days_in_month = cal_days_in_month(CAL_GREGORIAN, $selected_month, $selected_year);
+    
+    for ($day = 1; $day <= $num_days_in_month; $day++) {
+        $date_str = sprintf('%04d-%02d-%02d', $selected_year, $selected_month, $day);
+        $labels_for_chart[] = $date_str; // Hoặc chỉ $day nếu bạn muốn nhãn là số ngày
+        $revenue_data_for_chart[$date_str] = 0; // Mặc định doanh thu là 0 cho ngày đó
+    }
+
+    foreach ($chartRawData as $row) {
+        $revenue_data_for_chart[$row['order_day']] = (float) $row['daily_revenue'];
+    }
+    
+    // Sắp xếp lại dữ liệu theo thứ tự ngày và lấy ra mảng giá trị
+    $revenue_data_for_chart_values = array_values($revenue_data_for_chart);
+
+} catch (PDOException $e) {
+    $error .= "Error fetching chart data: " . $e->getMessage();
+    $revenue_data_for_chart_values = [];
+    $labels_for_chart = [];
+}
+
+
 // Truy vấn chi tiết đơn hàng theo tháng/năm được chọn
 if (!empty($selected_month) && !empty($selected_year)) {
     try {
@@ -128,6 +168,7 @@ $db_link = null;
     <link rel="icon" href="image/TDicon.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             min-height: 100vh;
@@ -237,6 +278,7 @@ $db_link = null;
                 <a href="statistic.php"><i class="bi bi-bar-chart"></i> Statistics</a>
                 <a href="manage_contact.php"><i class="bi bi-headset"></i> Contact Management</a>
                 <a href="manage_feedback.php"><i class="bi bi-chat-dots"></i> Feedback Management</a>
+                <a href="manage_preorder.php"><i class="bi bi-calendar-check"></i> Pre-order Management</a>
                 <hr class="text-white">
                 <a href="homepage.php" target="_blank"><i class="bi bi-house-door"></i> Back to TD Website</a>
             </aside>
@@ -316,6 +358,24 @@ $db_link = null;
                     </div>
                 </div>
 
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Monthly Revenue Chart for
+                            <?php
+                                // Nếu đang xem theo tháng cụ thể
+                                if (!empty($selected_month) && !empty($selected_year)) {
+                                    echo date('F', mktime(0, 0, 0, $selected_month, 10)) . ", " . $selected_year;
+                                } else {
+                                    // Mặc định hiển thị theo năm nếu không có tháng được chọn (ví dụ: muốn xem cả năm)
+                                    echo $selected_year;
+                                }
+                            ?>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
                 <div class="card">
                     <div class="card-header">
                         <h5>Order Details for
@@ -354,18 +414,18 @@ $db_link = null;
                                                 <td><?= htmlspecialchars($order['customer_name']) ?></td>
                                                 <td>
                                                     <?php
-                                                        $product_img_path = 'uploads/' . htmlspecialchars($order['product_img']);
-                                                        if (!empty($order['product_img']) && file_exists($product_img_path)) {
-                                                            echo "<img src='" . $product_img_path . "' alt='Product Image' class='img-thumbnail'>";
-                                                        } else {
-                                                            echo "<img src='image/default-product.png' alt='Default Image' class='img-thumbnail'>"; // Ảnh mặc định nếu không tìm thấy
-                                                        }
+                                                    $product_img_path = 'uploads/' . htmlspecialchars($order['product_img']);
+                                                    if (!empty($order['product_img']) && file_exists($product_img_path)) {
+                                                        echo "<img src='" . $product_img_path . "' alt='Product Image' class='img-thumbnail'>";
+                                                    } else {
+                                                        echo "<img src='image/default-product.png' alt='Default Image' class='img-thumbnail'>"; // Ảnh mặc định nếu không tìm thấy
+                                                    }
                                                     ?>
                                                 </td>
                                                 <td><?= htmlspecialchars($order['product_name']) ?></td>
-                                                <td>$<?= number_format($order['product_price'], 2) ?></td>
+                                                <td>$<?= number_format($order['product_price']) ?></td>
                                                 <td><?= htmlspecialchars($order['quantity']) ?></td>
-                                                <td>$<?= number_format($item_total, 2) ?></td>
+                                                <td>$<?= number_format($item_total) ?></td>
                                                 <td><?= htmlspecialchars($order['order_status']) ?></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -424,6 +484,57 @@ $db_link = null;
             adjustFontSize('totalQuantity');
             adjustFontSize('totalRevenue');
             adjustFontSize('totalOrders');
+
+            // --- JavaScript cho Chart.js ---
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            const revenueData = <?php echo json_encode(array_values($revenue_data_for_chart)); ?>;
+            const labels = <?php echo json_encode(array_keys($revenue_data_for_chart)); ?>; // Sử dụng keys để lấy nhãn ngày
+            
+            // Định dạng lại nhãn ngày nếu muốn chỉ hiển thị số ngày
+            const formattedLabels = labels.map(label => {
+                const date = new Date(label);
+                return date.getDate(); // Lấy chỉ số ngày
+            });
+
+            new Chart(ctx, {
+                type: 'line', // Loại biểu đồ: đường
+                data: {
+                    labels: formattedLabels, // Nhãn cho trục X (các ngày)
+                    datasets: [{
+                        label: 'Daily Revenue ($)',
+                        data: revenueData, // Dữ liệu doanh thu
+                        borderColor: 'rgb(75, 192, 192)', // Màu đường
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Màu nền dưới đường
+                        tension: 0.1, // Độ cong của đường
+                        fill: true // Tô màu dưới đường
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Daily Revenue Trends' // Tiêu đề biểu đồ
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Day of Month' // Nhãn trục X
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Revenue ($)' // Nhãn trục Y
+                            },
+                            beginAtZero: true // Bắt đầu trục Y từ 0
+                        }
+                    }
+                }
+            });
+            // --- Kết thúc JavaScript cho Chart.js ---
         });
     </script>
 </body>

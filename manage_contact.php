@@ -110,6 +110,7 @@ $result = mysqli_query($conn, $sql);
             <a href="statistic.php"><i class="bi bi-bar-chart"></i> Statistics</a>
             <a href="manage_contact.php"><i class="bi bi-headset"></i> Contact Management</a>
             <a href="manage_feedback.php"><i class="bi bi-chat-dots"></i> Feedback Management</a>
+            <a href="manage_preorder.php"><i class="bi bi-calendar-check"></i> Pre-order Management</a>
             <hr class="text-white">
             <a href="homepage.php"><i class="bi bi-house-door"></i> Back to TD Website</a>
         </aside>

@@ -171,8 +171,13 @@ if (isset($_GET['product_id'])) {
                             Profile</button>
 
                         <!-- History Button -->
-                        <button type="button" class="btn_edit" onclick="window.location.href='order_detail.php'">Order
-                            History</button>
+                        <button type="button" class="btn_edit" onclick="window.location.href='order_detail.php'">My
+                            Orders</button>
+                        </button>
+
+                        <!-- Pre-Order List Button -->
+                        <button type="button" class="btn_edit" onclick="window.location.href='preorder_list.php'">My
+                            Pre-Orders</button>
                         </button>
                     </div>
                 </div>
@@ -245,7 +250,7 @@ if (isset($_GET['product_id'])) {
             </div>
         </div>
     </div>
-
+    <?php include 'footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
     <?php if (!empty($alertMessage)): ?>
     <script>
