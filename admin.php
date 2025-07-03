@@ -10,6 +10,27 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
 $db = new Connect();
 $conn = $db->connectToPDO();
 
+$currentMonth = date('n'); // Lấy tháng hiện tại (1-12)
+$currentYear = date('Y');  // Lấy năm hiện tại
+
+// Khởi tạo biến cho tháng và năm được chọn
+$selectedMonth = $currentMonth;
+$selectedYear = $currentYear;
+
+// Xử lý khi có dữ liệu POST để lọc
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $postedMonth = filter_input(INPUT_POST, 'month', FILTER_VALIDATE_INT);
+    $postedYear = filter_input(INPUT_POST, 'year', FILTER_VALIDATE_INT);
+
+    // Kiểm tra tính hợp lệ và gán giá trị
+    if ($postedMonth !== false && $postedMonth >= 1 && $postedMonth <= 12) {
+        $selectedMonth = $postedMonth;
+    }
+    if ($postedYear !== false && $postedYear >= 1900 && $postedYear <= (date('Y') + 10)) { // Giới hạn năm cho hợp lý
+        $selectedYear = $postedYear;
+    }
+}
+
 $totalCustomers = 0;
 $totalProducts = 0;
 $pendingOrders = 0;
@@ -18,28 +39,34 @@ $newContactMessages = 0;
 $totalRevenue = 0;
 
 try {
+    // Total Customers (Usually all-time, not filtered by month/year)
     $stmt = $conn->prepare("SELECT COUNT(*) AS total_customers FROM customer WHERE role = 'customer'");
     $stmt->execute();
     $totalCustomers = $stmt->fetch(PDO::FETCH_ASSOC)['total_customers'];
 
+    // Total Products (Usually all-time)
     $stmt = $conn->prepare("SELECT COUNT(*) AS total_products FROM product");
     $stmt->execute();
     $totalProducts = $stmt->fetch(PDO::FETCH_ASSOC)['total_products'];
 
-    $stmt = $conn->prepare("SELECT COUNT(*) AS pending_orders FROM `order` WHERE order_status = 'Pending'");
-    $stmt->execute();
+    // Pending Orders for selected month/year
+    $stmt = $conn->prepare("SELECT COUNT(*) AS pending_orders FROM `order` WHERE order_status = 'Pending' AND MONTH(order_date) = ? AND YEAR(order_date) = ?");
+    $stmt->execute([$selectedMonth, $selectedYear]);
     $pendingOrders = $stmt->fetch(PDO::FETCH_ASSOC)['pending_orders'];
 
-    $stmt = $conn->prepare("SELECT COUNT(*) AS completed_orders FROM `order` WHERE order_status = 'Completed'");
-    $stmt->execute();
+    // Completed Orders for selected month/year
+    $stmt = $conn->prepare("SELECT COUNT(*) AS completed_orders FROM `order` WHERE order_status = 'Completed' AND MONTH(order_date) = ? AND YEAR(order_date) = ?");
+    $stmt->execute([$selectedMonth, $selectedYear]);
     $completedOrders = $stmt->fetch(PDO::FETCH_ASSOC)['completed_orders'];
 
+    // New Contact Messages (can also be filtered by date if needed, but keeping all-time for simplicity)
     $stmt = $conn->prepare("SELECT COUNT(*) AS new_messages FROM contact_messages");
     $stmt->execute();
     $newContactMessages = $stmt->fetch(PDO::FETCH_ASSOC)['new_messages'];
 
-    $stmt = $conn->prepare("SELECT SUM(o.quantity * p.product_price) AS total_revenue FROM `order` o JOIN product p ON o.product_id = p.product_id WHERE o.order_status = 'Completed'");
-    $stmt->execute();
+    // Total Revenue for selected month/year (only completed orders)
+    $stmt = $conn->prepare("SELECT SUM(o.quantity * p.product_price) AS total_revenue FROM `order` o JOIN product p ON o.product_id = p.product_id WHERE o.order_status = 'Completed' AND MONTH(o.order_date) = ? AND YEAR(o.order_date) = ?");
+    $stmt->execute([$selectedMonth, $selectedYear]);
     $totalRevenue = $stmt->fetch(PDO::FETCH_ASSOC)['total_revenue'] ?? 0;
 
 } catch (PDOException $e) {
@@ -130,6 +157,47 @@ try {
             <img src="image/TDlogo.png" alt="TD Motor Logo" class="logo-img rounded-circle shadow">
 
             <hr class="my-4">
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Filter Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="admin.php">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label for="month" class="form-label">Select Month:</label>
+                                <select class="form-select" id="month" name="month">
+                                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                                        <option value="<?php echo $i; ?>" <?= ($selectedMonth == $i) ? 'selected' : ''; ?>>
+                                            <?php echo date('F', mktime(0, 0, 0, $i, 10)); ?>
+                                        </option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="year" class="form-label">Select Year:</label>
+                                <select class="form-select" id="year" name="year">
+                                    <?php
+                                    $start_year = 2020; // Năm bắt đầu cho dropdown
+                                    $end_year = date('Y') + 1; // Năm hiện tại + 1
+                                    for ($y = $start_year; $y <= $end_year; $y++):
+                                    ?>
+                                        <option value="<?php echo $y; ?>" <?= ($selectedYear == $y) ? 'selected' : ''; ?>>
+                                            <?php echo $y; ?>
+                                        </option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <p class="text-muted small">Displaying statistics for **<?php echo date('F Y', mktime(0,0,0,$selectedMonth,1,$selectedYear)); ?>**</p>
 
             <div class="row">
                 <div class="col-md-4">

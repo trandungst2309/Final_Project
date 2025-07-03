@@ -18,6 +18,52 @@ $stmt = $db_link->prepare($query);
 $stmt->execute([$product_id]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// --- START: PHP for Comment Handling ---
+
+$comment_success_message = '';
+$comment_error_message = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_comment'])) {
+    if (isset($_SESSION['customer_id']) && $_SESSION['role'] === 'customer') {
+        $customer_id = $_SESSION['customer_id'];
+        $comment_content = trim($_POST['comment_content']);
+
+        if (!empty($comment_content) && $product_id > 0) {
+            try {
+                $insert_comment_query = "INSERT INTO `comment` (product_id, customer_id, comment_content) VALUES (?, ?, ?)";
+                $stmt_insert_comment = $db_link->prepare($insert_comment_query);
+                $stmt_insert_comment->execute([$product_id, $customer_id, $comment_content]);
+                $comment_success_message = "Your comment has been added successfully!";
+                // Optionally, redirect to clear POST data and prevent re-submission on refresh
+                // header("Location: product_detail.php?product_id=" . $product_id);
+                // exit();
+            } catch (PDOException $e) {
+                $comment_error_message = "Error submitting comment: " . $e->getMessage();
+            }
+        } else {
+            $comment_error_message = "Comment cannot be empty.";
+        }
+    } else {
+        $comment_error_message = "You must be logged in as a customer to post a comment.";
+    }
+}
+
+// Query to retrieve COMMENTS for the product WITH AVATAR (using profile_image column)
+// and also select customer_id from comment table for deletion check
+$query_comments = "
+    SELECT co.*, cu.customer_name, cu.profile_image
+    FROM `comment` co
+    JOIN customer cu ON co.customer_id = cu.customer_id
+    WHERE co.product_id = ?
+    ORDER BY co.comment_date DESC
+";
+$stmt_comments = $db_link->prepare($query_comments);
+$stmt_comments->execute([$product_id]);
+$comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
+
+// --- END: PHP for Comment Handling ---
+
+
 // Query to retrieve the product images (keeping your existing logic)
 $product_images = [];
 if ($product && !empty($product['product_img'])) {
@@ -40,7 +86,7 @@ if (!empty($product_video_url) && strpos($product_video_url, 'watch?v=') !== fal
     $product_video_url = str_replace('watch?v=', 'embed/', $product_video_url);
 }
 
-// Query to retrieve feedback for the product
+// Query to retrieve feedback for the product (your existing feedback query)
 $query_feedback = "
     SELECT f.*, c.customer_name
     FROM feedback f
@@ -270,7 +316,8 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
     /* Video and Feedback sections */
     .product-description-section,
     .product-video-section,
-    .feedback-section {
+    .feedback-section,
+    .comments-section { /* Added comments-section */
         margin-top: 50px;
         padding-top: 30px;
         border-top: 1px solid #eee;
@@ -406,6 +453,65 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
             /* Even smaller padding for mobile */
         }
     }
+
+    /* --- NEW COMMENT SECTION STYLES --- */
+    .comment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+
+    .comment-item {
+    display: flex;
+    align-items: stretch;
+    padding: 10px;
+    /* border: 1px solid #333; */
+    margin-bottom: 15px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+    min-height: 70px;
+    }
+
+    .comment-item:last-child {
+        border-bottom: none; /* No bottom border for the last comment if you want a continuous list look */
+    }
+
+    .comment-info {
+        flex-grow: 1; /* Allows comment content to take available space */
+    }
+
+    .comment-author {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center; /* Vertically align name and date */
+    }
+
+    .comment-date {
+        color: #777;
+        font-size: small;
+        margin-left: 8px; /* Space between name and date */
+    }
+
+    .comment-content {
+        margin-bottom: 0;
+    }
+    .comment-actions {
+        margin-left: auto; /* Pushes actions to the right */
+    }
+
+    .comment-container {
+        /* max-height: 500px; Limit height of comment section */
+        overflow-y: auto; /* Enable scrolling if content exceeds height */
+        margin-top: 20px; /* Space above comment section */
+        border: 1px solid #333;
+        border-radius: 5px;
+    }
+    /* --- END NEW COMMENT SECTION STYLES --- */
     </style>
 </head>
 
@@ -431,7 +537,7 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             </div>
 
-            <div class="product-info-column">                
+            <div class="product-info-column">
                 <h1 class="product-name"><?= htmlspecialchars($product['product_name']) ?></h1>
                 <div class="product-detail-line brand">Brand:
                     <span><?= htmlspecialchars($product['product_type_name'] ?? 'N/A') ?></span>
@@ -446,13 +552,13 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="product-detail-line status">Status: <span>
                         <?php
-                    if ($product['quantity'] > 0) {
-                        echo '(' . htmlspecialchars($product['quantity']) . ') In Stock';
-                    } else {
-                        echo 'Out of Stock';
-                    }
-                    ?>
-                    </span></div>
+                            if ($product['quantity'] > 0) {
+                                echo '(' . htmlspecialchars($product['quantity']) . ') In Stock';
+                            } else {
+                                echo 'Out of Stock';
+                            }
+                            ?>
+                        </span></div>
                 <div class="product-price"><?= number_format($product['product_price']) ?>$</div>
 
                 <?php
@@ -473,8 +579,9 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="btn-action-group">
                     <button class="btn active" id="btn-description">PRODUCT DESCRIPTION</button>
-                    <button class="btn" id="btn-installation">VIDEO</button>
-                    <button class="btn" id="btn-comment">FEEDBACK</button>
+                    <button class="btn" id="btn-video">VIDEO</button>
+                    <button class="btn" id="btn-feedback">FEEDBACK</button>
+                    <button class="btn" id="btn-comments">COMMENTS</button>
                 </div>
             </div>
         </div>
@@ -484,7 +591,7 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
             <p><?= htmlspecialchars($product['product_description']) ?></p>
         </div>
 
-        <div class="product-video-section" id="product-video-content">
+        <div class="product-video-section" id="product-video-content" style="display: none;">
             <h2>Cinematic video</h2>
             <br>
             <?php if (!empty($product_video_url)) { ?>
@@ -498,8 +605,8 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
             <?php } ?>
         </div>
 
-        <div class="feedback-section" id="product-comment-content">
-            <h2>Feedback</h2>
+        <div class="feedback-section" id="product-feedback-content" style="display: none;">
+            <h2>Customer Feedback</h2>
             <?php if (!empty($feedbacks)) { ?>
             <div class="list-group">
                 <?php foreach ($feedbacks as $feedback) { ?>
@@ -510,7 +617,67 @@ $feedbacks = $stmt_feedback->fetchAll(PDO::FETCH_ASSOC);
                 <?php } ?>
             </div>
             <?php } else { ?>
-            <p>No feedback.</p>
+            <p>No feedback available for this product.</p>
+            <?php } ?>
+        </div>
+
+        <div class="comments-section" id="product-comments-content" style="display: none;">
+            <h2>Product Comments</h2>
+
+            <?php if (!empty($comment_success_message)): ?>
+                <div class="alert alert-success mt-3" role="alert">
+                    <?= htmlspecialchars($comment_success_message) ?>
+                </div>
+            <?php endif; ?>
+            <?php if (!empty($comment_error_message)): ?>
+                <div class="alert alert-danger mt-3" role="alert">
+                    <?= htmlspecialchars($comment_error_message) ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['customer_id']) && $_SESSION['role'] === 'customer') : ?>
+                <div class="card mt-4 mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Leave a Comment</h5>
+                        <form action="product_detail.php?product_id=<?= $product_id ?>" method="POST">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="comment_content" rows="3" placeholder="Write your comment here..." required></textarea>
+                            </div>
+                            <button type="submit" name="submit_comment" class="btn btn-primary">Post Comment</button>
+                        </form>
+                    </div>
+                </div>
+            <?php else : ?>
+                <p class="alert alert-info mt-3">Please <a href="login.php">login</a> as a customer to post a comment.</p>
+            <?php endif; ?>
+
+            <h5 class="mt-5">All Comments (<span id="comment-count"><?= count($comments) ?></span>)</h5>
+            <?php if (!empty($comments)) { ?>
+                <div class="comment-container">
+                    <?php foreach ($comments as $comment) { ?>
+                        <div class="comment-item" id="comment-<?= htmlspecialchars($comment['comment_id']) ?>">
+                            <?php if (!empty($comment['profile_image'])) { ?>
+                                <img src="<?= 'uploads/' . htmlspecialchars($comment['profile_image']) ?>" alt="<?= htmlspecialchars($comment['customer_name']) ?>'s Avatar" class="comment-avatar">
+                            <?php } else { ?>
+                                <img src="image/default-avatar.png" alt="Default Avatar" class="comment-avatar">
+                            <?php } ?>
+                            <div class="comment-info">
+                                <div class="comment-author">
+                                    <?= htmlspecialchars($comment['customer_name']) ?>
+                                    <small class="comment-date"><?= date('M d, Y H:i', strtotime($comment['comment_date'])) ?></small>
+                                </div>
+                                <p class="comment-content"><?= nl2br(htmlspecialchars($comment['comment_content'])) ?></p>
+                            </div>
+                            <div class="comment-actions">
+                                <?php if (isset($_SESSION['customer_id']) && $_SESSION['customer_id'] == $comment['customer_id']) { ?>
+                                    <button class="btn btn-sm btn-danger delete-comment-btn" data-comment-id="<?= htmlspecialchars($comment['comment_id']) ?>">Delete</button>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } else { ?>
+                <p class="mt-3" id="no-comments-message">No comments yet!</p>
             <?php } ?>
         </div>
 
@@ -540,24 +707,29 @@ function changeMainImage(src, clickedThumbnail) {
 // JavaScript for tab-like behavior for action buttons
 document.addEventListener('DOMContentLoaded', function() {
     const descriptionBtn = document.getElementById('btn-description');
-    const installationBtn = document.getElementById('btn-installation');
-    const commentBtn = document.getElementById('btn-comment');
+    const videoBtn = document.getElementById('btn-video');
+    const feedbackBtn = document.getElementById('btn-feedback');
+    const commentsBtn = document.getElementById('btn-comments');
 
     const descriptionContent = document.getElementById('product-description-content');
-    const installationContent = document.getElementById(
-        'product-video-content'); // Assuming video is installation content
-    const commentContent = document.getElementById('product-comment-content');
+    const videoContent = document.getElementById('product-video-content');
+    const feedbackContent = document.getElementById('product-feedback-content');
+    const commentsContent = document.getElementById('product-comments-content');
+    const commentCountElement = document.getElementById('comment-count'); // Element to update comment count
+    const noCommentsMessage = document.getElementById('no-comments-message'); // Element for no comments message
 
     function showSection(sectionToShow, activeBtn) {
         // Hide all content sections
         descriptionContent.style.display = 'none';
-        installationContent.style.display = 'none';
-        commentContent.style.display = 'none';
+        videoContent.style.display = 'none';
+        feedbackContent.style.display = 'none';
+        commentsContent.style.display = 'none';
 
         // Remove active class from all buttons
         descriptionBtn.classList.remove('active');
-        installationBtn.classList.remove('active');
-        commentBtn.classList.remove('active');
+        videoBtn.classList.remove('active');
+        feedbackBtn.classList.remove('active');
+        commentsBtn.classList.remove('active');
 
         // Show the selected section and activate the button
         sectionToShow.style.display = 'block';
@@ -571,13 +743,61 @@ document.addEventListener('DOMContentLoaded', function() {
         showSection(descriptionContent, descriptionBtn);
     });
 
-    installationBtn.addEventListener('click', function() {
-        // If "Installation Guide" means the video, show the video section
-        showSection(installationContent, installationBtn);
+    videoBtn.addEventListener('click', function() {
+        showSection(videoContent, videoBtn);
     });
 
-    commentBtn.addEventListener('click', function() {
-        showSection(commentContent, commentBtn);
+    feedbackBtn.addEventListener('click', function() {
+        showSection(feedbackContent, feedbackBtn);
+    });
+
+    commentsBtn.addEventListener('click', function() {
+        showSection(commentsContent, commentsBtn);
+    });
+
+    // --- JavaScript for Delete Comment (AJAX) ---
+    // Use event delegation on a parent element for dynamically added buttons
+    commentsContent.addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-comment-btn')) {
+            const commentId = event.target.dataset.commentId;
+            const commentItem = event.target.closest('.comment-item'); // Get the parent .comment-item
+
+            if (confirm("Are you sure you want to delete this comment?")) {
+                fetch('delete_comment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'comment_id=' + commentId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the comment from the DOM
+                        if (commentItem) {
+                            commentItem.remove();
+                        }
+
+                        // Update the comment count
+                        if (commentCountElement) {
+                            let currentCount = parseInt(commentCountElement.textContent);
+                            commentCountElement.textContent = currentCount - 1;
+                        }
+
+                        // Show "No comments yet" message if count becomes 0
+                        if (parseInt(commentCountElement.textContent) === 0 && noCommentsMessage) {
+                            noCommentsMessage.style.display = 'block';
+                        }
+                    } else {
+                        alert('Error deleting comment: ' + (data.message || 'Unknown error.'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to delete the comment.');
+                });
+            }
+        }
     });
 });
 </script>

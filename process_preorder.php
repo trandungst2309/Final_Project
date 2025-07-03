@@ -8,13 +8,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'] ?? '';
     $expected_price = $_POST['expected_price'] ?? 0;
     $preferred_delivery_date = $_POST['preferred_delivery_date'] ?? null;
+    $deposit_amount = $_POST['calculated_deposit'] ?? 0;
+
+    // Thông tin thanh toán ảo (không lưu trữ)
+    $card_name = $_POST['card_name'] ?? '';
+    $card_number = $_POST['card_number'] ?? '';
+    $card_expiry = $_POST['card_expiry'] ?? '';
+    $card_cvv = $_POST['card_cvv'] ?? '';
 
     // Validate required fields
-    if (!$customer_id || !$product_name || !$expected_price || !$preferred_delivery_date) {
+    if (
+        !$customer_id || !$product_name || !$expected_price || !$preferred_delivery_date ||
+        !$deposit_amount || !$card_name || !$card_number || !$card_expiry || !$card_cvv
+    ) {
         die('Missing required information.');
     }
 
-    // Handle image upload if provided
+    // Xử lý upload ảnh nếu có
     $product_image = null;
 
     if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
@@ -24,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
 
         if (in_array(strtolower($fileExt), $allowedExt)) {
-            // Create upload folder if not exists
             $uploadDir = 'uploads/preorders/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
@@ -43,15 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Insert into database
+    // Insert vào cơ sở dữ liệu
     try {
         $conn = new Connect();
         $db = $conn->connectToPDO();
 
         $query = "INSERT INTO preorder 
-                    (customer_id, product_name, description, product_image, expected_price, preferred_delivery_date)
+                    (customer_id, product_name, description, product_image, expected_price, preferred_delivery_date, deposit_amount, is_deposit_paid)
                   VALUES 
-                    (:customer_id, :product_name, :description, :product_image, :expected_price, :preferred_delivery_date)";
+                    (:customer_id, :product_name, :description, :product_image, :expected_price, :preferred_delivery_date, :deposit_amount, :is_deposit_paid)";
         $stmt = $db->prepare($query);
         $stmt->execute([
             ':customer_id' => $customer_id,
@@ -59,8 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':description' => $description,
             ':product_image' => $product_image,
             ':expected_price' => $expected_price,
-            ':preferred_delivery_date' => $preferred_delivery_date
+            ':preferred_delivery_date' => $preferred_delivery_date,
+            ':deposit_amount' => $deposit_amount,
+            ':is_deposit_paid' => 1 // đã thanh toán
         ]);
+
+        // Có thể ghi log thanh toán demo nếu muốn (bỏ qua nếu không cần)
 
         header("Location: preorder_confirmation.php");
         exit;
