@@ -197,7 +197,7 @@ try {
                 </div>
             </div>
 
-            <p class="text-muted small">Displaying statistics for **<?php echo date('F Y', mktime(0,0,0,$selectedMonth,1,$selectedYear)); ?>**</p>
+            <!-- <p class="text-muted small">Displaying statistics for **<?php echo date('F Y', mktime(0,0,0,$selectedMonth,1,$selectedYear)); ?>**</p> -->
 
             <div class="row">
                 <div class="col-md-4">
