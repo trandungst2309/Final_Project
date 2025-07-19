@@ -8,17 +8,35 @@ require 'connect.php';
 $connect = new Connect();
 $db = $connect->connectToPDO();
 
-// Cập nhật trạng thái preorder và thanh toán
+// Cập nhật trạng thái preorder và tạo thông báo nếu hàng đã về
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 1. Cập nhật trạng thái preorder
     if (isset($_POST['preorder_id'], $_POST['status'])) {
-        $preorder_id = $_POST['preorder_id'];
+        $preorder_id = (int)$_POST['preorder_id'];
         $status = $_POST['status'];
+
+        // Cập nhật trạng thái
         $stmt = $db->prepare("UPDATE preorder SET status = :status WHERE preorder_id = :id");
         $stmt->execute([':status' => $status, ':id' => $preorder_id]);
+
+        // Nếu trạng thái mới là "Arrived" thì tạo thông báo
+        if ($status === 'Arrived') {
+            $info = $db->prepare("SELECT customer_id, product_name FROM preorder WHERE preorder_id = ?");
+            $info->execute([$preorder_id]);
+            $pre = $info->fetch(PDO::FETCH_ASSOC);
+
+            if ($pre) {
+                $msg = "Your pre-ordered product '{$pre['product_name']}' has arrived at the store. Click here to pay the remaining balance.";
+                $link = "final_payment.php?preorder_id={$preorder_id}";
+                $insert = $db->prepare("INSERT INTO notification (customer_id, content, link) VALUES (?, ?, ?)");
+                $insert->execute([$pre['customer_id'], $msg, $link]);
+            }
+        }
     }
 
+    // 2. Toggle thanh toán tiền cọc
     if (isset($_POST['toggle_paid_id'])) {
-        $id = $_POST['toggle_paid_id'];
+        $id = (int)$_POST['toggle_paid_id'];
         $stmt = $db->prepare("UPDATE preorder SET is_deposit_paid = NOT is_deposit_paid WHERE preorder_id = :id");
         $stmt->execute([':id' => $id]);
     }

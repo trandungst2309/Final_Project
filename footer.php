@@ -82,8 +82,8 @@
 	                    <h2>Address</h2>
 	                    <img src="./assets/images/about/home_line.png" alt="" class="img-fluid">
 	                    <div class="address-links">
-	                        <li class="address1"><i class="fa-solid fa-location-dot"></i>No. 160, 30/4
-	                            Street, An Phu, Ninh Kieu, Can Tho City
+	                        <li class="address1"><i class="fa-solid fa-location-dot"></i>No. 600, Nguyen Van Cu
+	                            Street, An Binh Ward, Ninh Kieu District, Can Tho City
 	                        </li>
 	                        <li><a href=""><i class="fa-solid fa-phone"></i> (+84)397655583</a></li>
 	                        <li><a href=""><i class="fa-solid fa-envelope"></i> dungttgcc200402@fpt.edu.vn</a></li>
