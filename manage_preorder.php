@@ -4,7 +4,7 @@ if (!isset($_SESSION['customer_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: login.php');
     exit;
 }
-require 'connect.php';
+require 'connect.php'; // Đảm bảo file connect.php đã được include
 $connect = new Connect();
 $db = $connect->connectToPDO();
 
@@ -35,9 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // 2. Toggle thanh toán tiền cọc
-    if (isset($_POST['toggle_paid_id'])) {
-        $id = (int)$_POST['toggle_paid_id'];
+    if (isset($_POST['toggle_deposit_paid_id'])) { // Đổi tên biến để rõ ràng hơn
+        $id = (int)$_POST['toggle_deposit_paid_id'];
         $stmt = $db->prepare("UPDATE preorder SET is_deposit_paid = NOT is_deposit_paid WHERE preorder_id = :id");
+        $stmt->execute([':id' => $id]);
+    }
+
+    // 3. Toggle thanh toán cuối cùng (MỚI)
+    if (isset($_POST['toggle_final_paid_id'])) {
+        $id = (int)$_POST['toggle_final_paid_id'];
+        $stmt = $db->prepare("UPDATE preorder SET final_payment_status = NOT final_payment_status WHERE preorder_id = :id");
         $stmt->execute([':id' => $id]);
     }
 }
@@ -46,11 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $filter = $_GET['filter'] ?? '';
 $validStatuses = ['Pending', 'Approved', 'Rejected', 'Cancelled', 'Waiting Stock', 'Arrived'];
 if ($filter && in_array($filter, $validStatuses)) {
+    // Đã thêm cột final_payment_status vào SELECT
     $stmt = $db->prepare("SELECT p.*, c.customer_name, c.email FROM preorder p 
                           JOIN customer c ON p.customer_id = c.customer_id 
                           WHERE p.status = :status ORDER BY p.order_date DESC");
     $stmt->execute([':status' => $filter]);
 } else {
+    // Đã thêm cột final_payment_status vào SELECT
     $stmt = $db->query("SELECT p.*, c.customer_name, c.email FROM preorder p 
                         JOIN customer c ON p.customer_id = c.customer_id 
                         ORDER BY p.order_date DESC");
@@ -111,6 +120,16 @@ $preorders = $stmt->fetchAll(PDO::FETCH_ASSOC);
             background-color: #20c997;
             color: #fff;
         }
+        /* Style cho nút Paid/Unpaid mới */
+        .btn-success { background-color: #28a745; border-color: #28a745; color: white; }
+        .btn-success:hover { background-color: #218838; border-color: #1e7e34; }
+        .btn-warning { background-color: #ffc107; border-color: #ffc107; color: #212529; }
+        .btn-warning:hover { background-color: #e0a800; border-color: #d39e00; }
+        .btn-info { background-color: #17a2b8; border-color: #17a2b8; color: white; }
+        .btn-info:hover { background-color: #138496; border-color: #117a8b; }
+        .btn-light-red { background-color: #f8d7da; border-color: #f8d7da; color: #721c24; }
+        .btn-light-red:hover { background-color: #f5c6cb; border-color: #f5c6cb; }
+
     </style>
 </head>
 <body>
@@ -178,9 +197,7 @@ $preorders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th>Description</th>
                             <th>Expected Price</th>
                             <th>Deposit</th>
-                            <th>Paid</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>Deposit Status</th> <th>Final Paid</th> <th>Order Status</th> <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -193,21 +210,36 @@ $preorders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <?php
                                     $img = $order['product_image'];
                                     $path = 'uploads/preorders/' . $img;
+                                    // Kiểm tra xem file có tồn tại không trước khi hiển thị
                                     if ($img && file_exists($path)) {
                                         echo "<img src='$path' alt='Product Image'>";
                                     } else {
-                                        echo "<span class='text-muted'>No image</span>";
+                                        // Kiểm tra nếu ảnh không phải preorders mà là ảnh cũ (nếu có)
+                                        $fallback_path = 'uploads/' . $img; // Đường dẫn cũ
+                                        if ($img && file_exists($fallback_path)) {
+                                            echo "<img src='$fallback_path' alt='Product Image'>";
+                                        } else {
+                                            echo "<span class='text-muted'>No image</span>";
+                                        }
                                     }
                                     ?>
                                 </td>
                                 <td><?= nl2br(htmlspecialchars($order['description'])) ?></td>
-                                <td>$<?= number_format($order['expected_price'], 2) ?></td>
-                                <td>$<?= number_format($order['deposit_amount'], 2) ?></td>
+                                <td>$<?= number_format($order['expected_price']) ?></td>
+                                <td>$<?= number_format($order['deposit_amount']) ?></td>
                                 <td>
                                     <form method="POST" class="d-inline">
-                                        <input type="hidden" name="toggle_paid_id" value="<?= $order['preorder_id'] ?>">
+                                        <input type="hidden" name="toggle_deposit_paid_id" value="<?= $order['preorder_id'] ?>">
                                         <button type="submit" class="btn btn-sm <?= $order['is_deposit_paid'] ? 'btn-success' : 'btn-warning text-dark' ?>">
                                             <?= $order['is_deposit_paid'] ? 'Paid' : 'Unpaid' ?>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td> <form method="POST" class="d-inline">
+                                        <input type="hidden" name="toggle_final_paid_id" value="<?= $order['preorder_id'] ?>">
+                                        <button type="submit" class="btn btn-sm <?= $order['final_payment_status'] ? 'btn-info' : 'btn-light-red' ?>"
+                                            <?= ($order['status'] !== 'Arrived' || $order['is_deposit_paid'] == 0) ? 'disabled' : '' ?>>
+                                            <?= $order['final_payment_status'] ? 'Final Paid' : 'Not Final Paid' ?>
                                         </button>
                                     </form>
                                 </td>
@@ -229,7 +261,7 @@ $preorders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <option value="<?= $status ?>" <?= $order['status'] === $status ? 'selected' : '' ?>><?= $status ?></option>
                                             <?php endforeach; ?>
                                         </select>
-                                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                        <button type="submit" class="btn btn-sm btn-primary">Update Status</button>
                                     </form>
                                 </td>
                             </tr>

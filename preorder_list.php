@@ -103,8 +103,8 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             ?>
                         </td>
                         <td><?= nl2br(htmlspecialchars($order['description'])) ?></td>
-                        <td>$<?= number_format($order['expected_price'], 2) ?></td>
-                        <td>$<?= number_format($order['deposit_amount'], 2) ?></td>
+                        <td>$<?= number_format($order['expected_price']) ?></td>
+                        <td>$<?= number_format($order['deposit_amount']) ?></td>
                         <td>
                             <span class="badge <?= $order['is_deposit_paid'] ? 'bg-success' : 'bg-warning text-dark' ?>">
                                 <?= $order['is_deposit_paid'] ? 'Paid' : 'Unpaid' ?>
@@ -127,8 +127,14 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <input type="hidden" name="cancel_id" value="<?= $order['preorder_id'] ?>">
                                     <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
                                 </form>
+                            <?php elseif ($order['status'] === 'Arrived'): ?>
+                                <?php if ($order['final_payment_status']): ?>
+                                    <span class="badge bg-success">Final Paid</span>
+                                <?php else: ?>
+                                    <a href="final_payment.php?preorder_id=<?= $order['preorder_id'] ?>" class="btn btn-primary btn-sm">Pay Final</a>
+                                <?php endif; ?>
                             <?php else: ?>
-                                <span class="text-muted">N/A</span>
+                                <span class="text-muted">Not available</span>
                             <?php endif; ?>
                         </td>
                     </tr>
