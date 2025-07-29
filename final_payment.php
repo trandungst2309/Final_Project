@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'connect.php';
+require 'send_mail.php'; // THÊM DÒNG NÀY
 
 if (!isset($_SESSION['customer_id'])) {
     header('Location: login.php');
@@ -28,7 +29,7 @@ if (!$order) {
     exit;
 }
 
-// Lấy thông tin khách hàng từ bảng customer
+// Lấy thông tin khách hàng
 $stmt_customer = $db->prepare("SELECT * FROM customer WHERE customer_id = ?");
 $stmt_customer->execute([$customer_id]);
 $customer = $stmt_customer->fetch(PDO::FETCH_ASSOC);
@@ -38,35 +39,31 @@ if (!$customer) {
     exit;
 }
 
-// Kiểm tra điều kiện hợp lệ để thanh toán cuối cùng
+// Kiểm tra điều kiện thanh toán
 if ($order['status'] !== 'Arrived') {
     echo "<div class='alert alert-warning'>This order is not eligible for final payment yet. The order has not arrived.</div>";
     exit;
 }
-if ($order['is_deposit_paid'] != 1) { // 0 = not paid, 1 = paid
+if ($order['is_deposit_paid'] != 1) {
     echo "<div class='alert alert-warning'>This order is not eligible for final payment yet. The deposit has not been paid.</div>";
     exit;
 }
 
 // Nếu submit thanh toán
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Lấy thông tin khách hàng đã chỉnh sửa từ form
     $customer_name_from_form = htmlspecialchars($_POST['firstname'] ?? '');
     $email_from_form = htmlspecialchars($_POST['email'] ?? '');
     $address_from_form = htmlspecialchars($_POST['address'] ?? '');
     $phone_from_form = htmlspecialchars($_POST['phone'] ?? '');
     $payment_method = htmlspecialchars($_POST['payment_method'] ?? '');
 
-    $cardnumber = '';
-    $expdate = '';
-    $cvv = '';
     if ($payment_method === 'Credit by card') {
         $cardnumber = htmlspecialchars($_POST['cardnumber'] ?? '');
         $expdate = htmlspecialchars($_POST['expdate'] ?? '');
         $cvv = htmlspecialchars($_POST['cvv'] ?? '');
     }
 
-    // Cập nhật thông tin khách hàng vào CSDL
+    // Cập nhật thông tin khách hàng
     $update_customer_stmt = $db->prepare("UPDATE customer SET customer_name = ?, email = ?, address = ?, phone = ? WHERE customer_id = ?");
     $update_customer_stmt->execute([
         $customer_name_from_form,
@@ -76,44 +73,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $customer_id
     ]);
 
-    // Đây là nơi bạn sẽ tích hợp với cổng thanh toán thực tế.
-    // Sau khi thanh toán thực tế thành công, bạn mới cập nhật trạng thái trong CSDL.
-
+    // Cập nhật trạng thái thanh toán
     $update = $db->prepare("UPDATE preorder SET final_payment_status = 1 WHERE preorder_id = ?");
     $update->execute([$preorder_id]);
+
+    // Gửi email xác nhận
+    $expected_price = $order['expected_price'];
+    $deposit_amount = $order['deposit_amount'];
+    $remaining_balance = $expected_price - $deposit_amount;
+
+    $subject = 'Final Payment Confirmation - TD Motor';
+    $body = "
+        <h3>Dear {$customer_name_from_form},</h3>
+        <p>We have received your <strong>final payment</strong> for the pre-ordered product <strong>{$order['product_name']}</strong>.</p>
+        <p><strong>Remaining Paid:</strong> $" . number_format($remaining_balance) . "<br>
+        <strong>Payment Method:</strong> {$payment_method}</p>
+        <p>We are preparing your order for delivery. Thank you for trusting TD Motor!</p>
+        <p><strong>- TD Motor Team</strong></p>
+    ";
+
+    sendMail($email_from_form, $customer_name_from_form, $subject, $body);
 
     echo '
         <div class="d-flex justify-content-center align-items-center vh-100">
             <div class="text-center">
                 <div class="mb-4">
-                    <!-- SVG Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="#28a745" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.97 10.97a.75.75 0 0 0 1.07 0l3.992-3.992a.75.75 0 1 0-1.06-1.06L7.5 9.44 6.03 7.97a.75.75 0 1 0-1.06 1.06l2 2z"/>
                     </svg>
                 </div>
                 <h3 class="text-success">Payment Successful!</h3>
                 <p class="mb-4">Thank you! Your remaining payment has been completed.</p>
-                <a href="preorder_list.php" class="btn btn-primary"
-                style="border-radius: 25px; padding: 8px 20px; font-weight: 500; transition: background-color 0.3s ease;">
-                Back to My Pre-orders
-                </a>
+                <a href="preorder_list.php" class="btn btn-primary" style="border-radius: 25px; padding: 8px 20px; font-weight: 500;">Back to My Pre-orders</a>
             </div>
         </div>';
     exit;
 }
 
-// Tính số tiền còn lại
+// Tính toán hiển thị
 $expected_price = $order['expected_price'];
 $deposit_amount = $order['deposit_amount'];
 $remaining_balance = $expected_price - $deposit_amount;
 
-// Lưu thông tin khách hàng vào biến để điền vào form, sẽ ưu tiên dữ liệu POST nếu có
 $display_customer_name = htmlspecialchars($_POST['firstname'] ?? $customer['customer_name']);
 $display_email = htmlspecialchars($_POST['email'] ?? $customer['email']);
 $display_address = htmlspecialchars($_POST['address'] ?? $customer['address']);
 $display_phone = htmlspecialchars($_POST['phone'] ?? $customer['phone']);
-
-// Xác định phương thức thanh toán đã chọn (để giữ trạng thái radio button sau khi submit nếu có lỗi)
 $selected_payment_method = $_POST['payment_method'] ?? 'Cash on Delivery';
 ?>
 

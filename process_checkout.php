@@ -2,6 +2,9 @@
 session_start();
 include 'connect.php';
 
+// Gọi PHPMailer
+require 'send_mail.php';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (
         isset($_SESSION['customer_id'], $_POST['product_id'], $_POST['product_name'],
@@ -18,28 +21,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $phone = $_POST['phone'];
         $payment = $_POST['payment_method'];
         $order_date = date('Y-m-d H:i:s');
-        $quantity = 1; // Only one product per order
+        $quantity = 1;
         $order_status = 'Pending';
 
-        // Khởi tạo kết nối
         $conn = new Connect();
         $db_link = $conn->connectToPDO();
 
-        // Thêm đơn hàng vào bảng `order`
+        // Thêm đơn hàng
         $query = "INSERT INTO `order` 
             (customer_id, product_id, payment, order_date, quantity, customer_name, order_status) 
             VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $db_link->prepare($query);
         $stmt->execute([$customer_id, $product_id, $payment, $order_date, $quantity, $customer_name, $order_status]);
 
-        // KHÔNG giảm tồn kho, KHÔNG tăng sold_quantity ở đây
-
-        // Xoá khỏi giỏ hàng nếu có
+        // Xóa khỏi giỏ hàng nếu có
         $query = "DELETE FROM cart WHERE customer_id = ? AND product_id = ?";
         $stmt = $db_link->prepare($query);
         $stmt->execute([$customer_id, $product_id]);
 
-        // Điều hướng sang trang xác nhận
+        // Gửi email xác nhận
+        $subject = 'Order Confirmation - TD Motor';
+        $body = "
+            <h3>Dear $customer_name,</h3>
+            <p>Thank you for your order at <strong>TD Motor</strong>.</p>
+            <p>
+                <strong>Product:</strong> $product_name<br>
+                <strong>Price:</strong> $" . number_format($product_price) . "<br>
+                <strong>Payment Method:</strong> $payment<br>
+                <strong>Shipping Address:</strong> $address
+            </p>
+            <p>We will process and deliver your order as soon as possible.</p>
+            <br><p>Best regards,<br><strong>TD Motor</strong></p>
+        ";
+        sendMail($email, $customer_name, $subject, $body);
+
+        // Điều hướng
         header('Location: order_confirmation.php');
         exit();
     } else {
