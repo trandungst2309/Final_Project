@@ -239,6 +239,53 @@ $_SESSION['address'] = $customer['address'];
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+document.querySelector("form").addEventListener("submit", function(e) {
+    var ccRadio = document.getElementById('cc');
+    if (ccRadio.checked) {
+        var cardNumber = document.getElementById("cardnumber").value.trim();
+        var expDate = document.getElementById("expdate").value.trim();
+        var cvv = document.getElementById("cvv").value.trim();
+
+        // Regex kiểm tra
+        var cardRegex = /^\d{16}$/; // 16 số
+        var expRegex = /^(0[1-9]|1[0-2])\/\d{2}$/; // MM/YY
+        var cvvRegex = /^\d{3,4}$/; // CVV 3 hoặc 4 số
+
+        var errors = [];
+
+        if (!cardRegex.test(cardNumber)) {
+            errors.push("Card number must be 16 digits.");
+        }
+
+        if (!expRegex.test(expDate)) {
+            errors.push("Expiration date must be in MM/YY format.");
+        } else {
+            // Kiểm tra ngày hết hạn
+            var parts = expDate.split("/");
+            var month = parseInt(parts[0], 10);
+            var year = parseInt("20" + parts[1], 10);
+
+            var today = new Date();
+            var exp = new Date(year, month);
+
+            if (exp < today) {
+                errors.push("Expiration date is expired.");
+            }
+        }
+
+        if (!cvvRegex.test(cvv)) {
+            errors.push("CVV must be 3 or 4 digits.");
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join("\n"));
+        }
+    }
+});
+</script>
+
 </body>
 
 </html>

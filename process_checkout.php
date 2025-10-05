@@ -65,4 +65,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Location: checkout.php');
     exit();
 }
+
+if ($_POST['payment_method'] === "Credit by card") {
+    $cardnumber = preg_replace('/\s+/', '', $_POST['cardnumber']);
+    $expdate = $_POST['expdate'];
+    $cvv = $_POST['cvv'];
+
+    if (!preg_match('/^\d{16}$/', $cardnumber)) {
+        die("Invalid card number!");
+    }
+
+    if (!preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $expdate)) {
+        die("Invalid expiration date format!");
+    } else {
+        list($mm, $yy) = explode("/", $expdate);
+        $expYear = (int)("20".$yy);
+        $expMonth = (int)$mm;
+        if (mktime(0,0,0,$expMonth+1,0,$expYear) < time()) {
+            die("Card is expired!");
+        }
+    }
+
+    if (!preg_match('/^\d{3,4}$/', $cvv)) {
+        die("Invalid CVV!");
+    }
+}
+
 ?>

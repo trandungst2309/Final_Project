@@ -145,7 +145,7 @@ $conn = $connect->connectToPDO();
 
             <main class="col-md-9 col-lg-10 p-4">
                 <h2 style="color: red; font-weight: bold;">Account Management</h2>
-                    <a href="add_producer.php" class="btn btn-info mb-3">Add Producer</a>
+                    <!-- <a href="add_producer.php" class="btn btn-info mb-3">Create Account</a> -->
                     <a href="admin.php" class="btn btn-success mb-3">Back to Dashboard</a>
                 <div class="card">
                     <!-- <div class="card-header text-danger fw-bold">
